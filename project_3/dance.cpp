@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <cassert>
 using namespace std;
 
 bool isSyntacticallyCorrect(string dance);
@@ -50,12 +51,24 @@ int main()
         if (d == "quit")
             break;
         cout << "translateDance returns " << endl;
-        string instructions = "";
-        int badBeat_ = 0;
+        string instructions = "WOW!";
+        int badBeat_ = -999;
         int output = 0;
         output = translateDance(d, instructions, badBeat_);
         cout << "Badbeat num: " << badBeat_ << "\noutput #: " << output << "\nInstructions: " << instructions << endl;
     }
+
+    // assert(isSyntacticallyCorrect("d/u//"));
+    // assert(!isSyntacticallyCorrect("d/z//"));
+    // string ins;
+    // int bb;
+    // ins = "WOW";  // so we can detect whether translateDance sets ins
+    // bb = -999;    // so we can detect whether translateDance sets bb
+    // assert(translateDance("u//d/3r///d/", ins, bb) == 0  &&  ins == "u.dRRRd"  &&  bb == -999);
+    // ins = "WOW";  // so we can detect whether translateDance sets ins
+    // bb = -999;    // so we can detect whether translateDance sets bb
+    // assert(translateDance("5r//", ins, bb) == 3  &&  ins == "WOW"  &&  bb == 3);
+    // cerr << "All tests succeeded" << endl;
 }
 
 bool isSyntacticallyCorrect(string dance)
@@ -68,6 +81,7 @@ bool isSyntacticallyCorrect(string dance)
         // cout << "Temporary: " << temp << endl;
         if (dance[i] == '/')
         {
+            //performs check on beat when / is hit
             containsSlash = true;
             if (!isValidBeat(temp))
             {
@@ -80,6 +94,9 @@ bool isSyntacticallyCorrect(string dance)
         {
             temp += dance[i];
         }
+    }
+    if(dance ==""){
+        return true; 
     }
     // two edge cases are if dance has no '/' or if last char is no '/'
     if (!containsSlash || dance[length - 1] != '/')
@@ -94,7 +111,7 @@ bool isValidBeat(string s)
     int length = static_cast<int>(s.size());
     if (s == "")
     {
-        // cout << "Bypassed " << endl;
+        // empty string is valid
         return true;
     }
     if (length > 3)
@@ -159,24 +176,16 @@ int translateDance(string dance, string &instructions, int &badBeat)
     int beatIndex = 0;
     string temp = "";
     double freezeCount = 0;
-    int totalBeats = 0;
     string instr = "";
     int freezeStopIndex =0;  
 
-    for (int a = 0; a < length; a++)
-    {
-        if (dance[a] == '/')
-        {
-            totalBeats++;
-        }
-    }
     for (int i = 0; i < length; i++)
     {
         if (dance[i] == '/')
         {
             beatIndex++;
             freezeCount = extractDigits(temp);
-            // Check for digit error
+            // Check for digit error (404 is prev char is / or isalpha)
             if (freezeCount != 404 && freezeCount < 2)
             {
                 badBeat = beatIndex;
@@ -186,13 +195,11 @@ int translateDance(string dance, string &instructions, int &badBeat)
             //if temp is not "" or length 1. !(/ or dir)
             if(freezeCount != 404){
                 freezeStopIndex = freezeCount + i;
-                cout << "I is: " << i << " Dance at i is: " << dance[i] << endl;
                 for (int j = i; j < freezeStopIndex; j++)
                 { 
-                    cout << "Dance at j (T1): " << dance[j] << endl; 
+                    // check for premature end of freeze end via outofbounds
                     if (j >= length)
                     {
-                        cout << "TotalBeats: " << totalBeats << endl; 
                         //actually counting / at index i twice so dont add 1
                         badBeat = beatIndex;
                         return 4;
@@ -202,21 +209,22 @@ int translateDance(string dance, string &instructions, int &badBeat)
                         beatIndex++;
                         instr += toupper(temp[temp.size() - 1]);
                     }
+                    // check for premature freeze end via unexpected char 
                     else
-                    {
-                        cout << "Dance at j: " << dance[j] << endl; 
+                    { 
                         badBeat = beatIndex;
                         return 3;
                     }
                 }
-            } else if(static_cast<int>(temp.size()) ==1 && isValidDir(dance[i])){
+                //if it is single char add lowercase version
+            }
+             else if(static_cast<int>(temp.size()) ==1 && isValidDir(dance[i])){
                 instr += tolower(dance[i]);
             } 
-            ///want to only write . if / not part of freeze
+            ///want to only write . if / not already replaced by uppercase char from freeze
             else if(temp == "" && i >= freezeStopIndex){
                 instr += '.';
             }
-            // check for premature freeze end via outofbounds
             temp = "";
         }
         else
@@ -229,18 +237,13 @@ int translateDance(string dance, string &instructions, int &badBeat)
     }
     instructions = instr; 
     return 0;
-
-    // but a beat specifies a freeze of length less than 2, badBeat is set to the number of that beat (where the first beat of the whole dance is number 1, etc.), and the function returns 2.
-    // but while a freeze is in effect, a beat not consisting of only a slash is present, badBeat is set to the number of that beat (where the first beat of the whole dance is number 1, etc.), and the function returns 3.
-    // but ends prematurely with a freeze in effect but too few empty beats at the end of the string to finish the freeze, badBeat is set to one more than the number of beats in the string, and the function returns 4.
-    //! translatable at this point
-    // the function sets instructions to the translated form of the dance and returns 0.
 }
 
 double extractDigits(string s)
 {
     int length = static_cast<int>(s.size());
     double freezeCount = 0;
+    // set unique error code(greter than 99) when extracting digits from dir or / characters. 
     if (s == "" || length == 1)
     {
         freezeCount = 404;

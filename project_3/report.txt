@@ -1,0 +1,78 @@
+a. One of the major obstacles was creating the isSyntactically correct function. 
+My intial design of the program was to loop through the dance string, and compare values in the string by manually indexing forward. 
+this however was finicky and outofbounds errors were extremely likely, and if I did prevent these out of bounds errors there were many edge cases that my program would not catch. 
+This is when I realized to vary my approach by creating a temporary string to append chars in dance until a / is reached as all valid beats must be closed by a backslash. 
+this is both more reliable, efficient and also adaptable for my code in translateDance. 
+
+b. 
+
+pseudocode: 
+
+isSyntacticallyCorrect: 
+    repeatedly loop through dance: 
+        if char not /
+            append to temporary string
+        else
+            if not valid beat
+                return false
+            reset temp string 
+    Catch edge cases of, / at end, dance = "", dance has no /
+        output accordingly 
+    default return true
+
+(brief explanation fo translateDance): 
+translate dance is very simliar to isSyntactically correct, although it also is responsible for adding characters to instructions and preforming different checks. 
+It works by looping through dance, saving chars into a temporary string that represents the current beat, then if the current beat is translatable by using the digit values to check the rest of the string. 
+Additionally while it is preforming these checks it is updating a local variable named instr that adds the approppriate capital/lowercase letters and periods. 
+
+translateDance: 
+repeatedly loop through dance: 
+        if char not /  
+            if also dir add dir to instructions
+            add to temp 
+        else 
+            increase beatindex
+            call extractDigit function to get integer val of digits in beat, ouput error code for / or dir
+            if int val is specifc error code
+                pass
+            else: 
+                preform checks to ensure freeze isnt terminated unexpectadly and digits are valid 
+                do corresponding return statements/badbeat updating
+            otherwise if is dir char
+                add to instructions
+            otherwise if / and not already used by freeze
+                add to instructions
+        reset temp
+save instructions
+return 0
+
+c. 
+incorrect syntax beats: 
+03u///10r////////// ## char not followed by slash
+23423r// ## more than 2 digits
+2G// ## invalid dir check 
+//G ## another last character check
+d2d ## no slashes 
+23dd/ ## two valid dirs
+2/ ## digit with no subsequent dir
+0d/0d ##bypassing first check of dir + /, not checked by either digit case as, would return true if not for check on last character
+
+
+translate dance test: 
+d/r/D/2d/
+
+Invalid lengths of badBeat: 
+0r/// ## test if badBeat is assigned to right value
+01r/// ## test for both cases of invalid digit
+///0r// ## test for diff index of badBeat (ouput 4)
+//0r/ ## end of dance test
+
+Premature ending due to not enough / or end of string: 
+///10r/u/ ## should give leftmost error which is 3, badbeat = 5.
+///10r// ## should give error 4, badbeat = 6. 
+d/3r//u/ ## output should be 3, badBeat 4
+
+instruction translate tests: 
+    D/u/R/r/L/ ## durrl basic translate with no digits
+    R/3u///D/ ## testing digit sequence
+    u//d/3r////d/ ## testing periods with and without digit sequence before

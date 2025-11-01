@@ -6,7 +6,7 @@ u//D/3r///d/
 
 
 incorrect syntax beats: 
-23Rr// ## char not followed by slash
+03u///10r////////// ## char not followed by slash
 23423r// ## more than 2 digits
 2G// ## invalid dir check 
 //G ## another last character check
