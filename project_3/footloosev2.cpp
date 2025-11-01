@@ -7,7 +7,7 @@ int translateDance(string dance, string &instructions, int &badBeat);
 bool isValidDir(char c);
 bool isValidBeat(string s);
 int translateDance(string dance, string &instructions, int &badBeat);
-int extractDigits(string s);
+double extractDigits(string s);
 
 int main()
 {
@@ -158,7 +158,7 @@ int translateDance(string dance, string &instructions, int &badBeat)
     //! all syntactically correct at this point
     int beatIndex = 0;
     string temp = "";
-    int freezeCount = 0;
+    double freezeCount = 0;
     int totalBeats = 0;
     for (int a = 0; a < length; a++)
     {
@@ -179,52 +179,31 @@ int translateDance(string dance, string &instructions, int &badBeat)
                 badBeat = beatIndex;
                 return 2;
             }
-
-            // // check for premature freeze end via not enough slashes
-            // if (i + freezeCount < length)
-            // {
-            //     for (int j = i; j < freezeCount; j++)
-            //     {
-            //         beatIndex++;
-            //         if (dance[j] != '/')
-            //         {
-            //             badBeat = beatIndex;
-            //             return 3;
-            //         }
-            //     }
-            // }
-
-            // // check for premature freeze end via outofbounds
-            // if (i + freezeCount >= length)
-            // {
-            //     badBeat = beatIndex;
-            //     return 4;
-            // }
-            // temp = "";
-
             //!!!
             if(freezeCount != 404){ 
-            cout << "I is: " << i << " Dance at i is: " << dance[i] << endl; 
-            for (int j = i; j < (i+freezeCount); j++)
-            {
-                cout << "Dance at j (T1): " << dance[j] << endl; 
-                if (j >= length)
+                cout << "I is: " << i << " Dance at i is: " << dance[i] << endl; 
+                for (int j = i; j < (i+freezeCount); j++)
                 {
-                    cout << "TotalBeats: " << totalBeats << endl; 
-                    badBeat = totalBeats + 1;
-                    return 4;
+                    cout << "Dance at j (T1): " << dance[j] << endl; 
+                    if (j >= length)
+                    {
+                        cout << "TotalBeats: " << totalBeats << endl; 
+                        //actually counting / at index i twice so dont add 1
+                        badBeat = beatIndex;
+                        return 4;
+                    }
+                    else if(dance[j]== '/'){ 
+                        //although counting / at index i twice, we miss final slash in this case, thus the count is correct
+                        beatIndex++;
+                    } 
+                    else
+                    {
+                        cout << "Dance at j: " << dance[j] << endl; 
+                        badBeat = beatIndex;
+                        return 3;
+                    }
                 }
-                else if(dance[j]== '/'){ 
-                    beatIndex++;
-                } 
-                else
-                {
-                    cout << "Dance at j: " << dance[j] << endl; 
-                    badBeat = beatIndex;
-                    return 3;
-                }
-            }
-        } 
+            } 
             
 
             // check for premature freeze end via outofbounds
@@ -234,6 +213,8 @@ int translateDance(string dance, string &instructions, int &badBeat)
         else
         {
             temp += dance[i];
+
+            
         }
     }
 
@@ -246,21 +227,21 @@ int translateDance(string dance, string &instructions, int &badBeat)
     // the function sets instructions to the translated form of the dance and returns 0.
 }
 
-int extractDigits(string s)
+double extractDigits(string s)
 {
     int length = static_cast<int>(s.size());
-    int freezeCount = 0;
-    if (s == "")
+    double freezeCount = 0;
+    if (s == "" || length == 1)
     {
         freezeCount = 404;
     }
     if (length == 2)
     {
-        freezeCount = static_cast<int>(s.at(0) - '0');
+        freezeCount = static_cast<double>(s.at(0) - '0');
     }
     else if (length == 3)
     {
-        freezeCount = static_cast<int>(s.at(0) - '0') * 10 + static_cast<int>(s.at(1) - '0');
+        freezeCount = static_cast<double>(s.at(0) - '0') * 10 + static_cast<int>(s.at(1) - '0');
     }
     return freezeCount;
 }

@@ -23,8 +23,10 @@ Invalid lengths of badBeat:
 0r/// ## test if badBeat is assigned to right value
 01r/// ## test for both cases of invalid digit
 ///0r// ## test for diff index of badBeat (ouput 4)
+//0r/ ## end of dance test
 
 Premature ending due to not enough / or end of string: 
 ///10r/u/ ## should give leftmost error which is 3, badbeat = 5.
 ///10r// ## should give error 4, badbeat = 6. 
-d/3r//u/ ## output should be 4, badBeat 2 
+d/3r//u/ ## output should be 3, badBeat 4
+
