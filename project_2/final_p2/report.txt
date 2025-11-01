@@ -1,0 +1,63 @@
+(a)
+A brief description of notable obstacles you overcame.
+One obstacle I overcame was figuring out why when I would repeatedly get the error "You must enter and institution type. ". This was because I did a getline() right after cin so the buffer with the '\n' was not cleared, thus always making getline() assign an empty string to "type". 
+Another obstacle I overcame was the casework of selecting different rates depending on what range the basis amount is in, while also accumulating the settlment amounts from the previous stages. 
+Ex. 180 basis amount becomes 160 * 0.07 + 20 * (0.09 or 0.17). In the end I manually coded each range of basis amounts to account for the previous thresholds rates and add the gotten value to settlement amount before adding on the new settlement calculations. 
+The last obstacle was figuring out how to round to truncate to one decimal place. I was going to multiply the number by 10 do a floor() and then divide by ten, but I opted for the simpler cout.setf() function. 
+
+(b) 
+empty string for institution (error message check): 
+    Institution: "" 
+	Basis amount (in trillions): 38
+	Institution type: law firm
+
+empty string for type (error message check): 
+    Institution: UCLA 
+	Basis amount (in trillions): 38
+	Institution type: ""
+
+0 for basis amount (error message check): 
+    Institution: UCLA 
+	Basis amount (in trillions): 0
+	Institution type: "university"
+
+Negative for basis amount (error message check): 
+    Institution: UCLA 
+	Basis amount (in trillions): -4
+	Institution type: "university"
+
+double errors (most recent error message only display): 
+    Institution: "" 
+	Basis amount (in trillions): -4
+	Institution type: "university"
+
+Float basis amount (1 decimal to right check): 
+    Institution: UCLA 
+	Basis amount (in trillions): 32.098
+	Institution type: "university"
+
+Non-university type (calculation check): 
+    Institution: UCLA 
+	Basis amount (in trillions): 32.098
+	Institution type: "law firm"
+
+Basis amount = 160 (boundary condition check): 
+    Institution: UCLA 
+	Basis amount (in trillions): 160
+	Institution type: "law firm"
+
+Basis amount = 760 (boundary condition check): 
+    Institution: UCLA 
+	Basis amount (in trillions): 760
+	Institution type: "law firm"
+
+Basis amount = 760, type = university (boundary condition check): 
+    Institution: UCLA 
+	Basis amount (in trillions): 760
+	Institution type: "university"
+
+Basis amount = 1000 (boundary condition check): 
+    Institution: UCLA 
+	Basis amount (in trillions): 1000
+	Institution type: "law firm"
+

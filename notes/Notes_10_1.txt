@@ -1,0 +1,17 @@
+
+
+Running G++ on make really runs clang under the hood
+Division by 0 varies from machine to machine: 
+
+Why, because checking div by 0 is time consuming so some machines check for error and some dont. 
+
+Different compilers have different checks. 
+
+for project writeups use export dont rename file extension
+
+g++ -std=c++17 project1_original.cpp -o project1_original
+./project1_original
+
+
+SEASnet 
+scp into it which copies files from local to the server

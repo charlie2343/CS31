@@ -1,0 +1,112 @@
+1. 1 
+2. output: 
+*
+**
+
+(1) iteration; 
+i = 2
+j = 0 j <=2 J++
+***
+i = 1 
+j =0 J <=1 j++
+**
+.. 
+*
+(3)
+i = 2
+j = 3; j > 2; j--
+* 
+i = 1
+j = 3; j > 1 j--
+** 
+
+(4)
+i = 2
+j =2; j >= 2; j--
+* 
+i = 1
+** 
+(5)
+j = 3; j >= 2; j--
+
+(6)
+j = 5; j>= 5
+* 
+i = 4
+j = 5 j >= 4 
+** 
+
+3.   
+4.
+i = 0
+() value = 1
+i = 1; 
+value +=1
+value -=1
+value +=1 
+value +=2 
+value = 4
+i = 2; 
+value += 2
+value = 6
+i = 3; 
+value += 3
+value = 9
+i = 4; 
+value = 11
+
+5. for(i = 0; i < 4; i++){ 
+    i =0, j = 0; 
+    i = 1, j = 1, 0; 
+    i = 2; j = 2,1,0 
+}
+(1)
+6. 
+-3+3+555+99999
+[-,+,+,5,+,9,9]
+i = 0
+mult = 5
+i = 2
+mult = 10
+i =4
+mult = 12
+i =6
+offs = 1
+i = 8
+mult = 18
+
+3 with exp[4] = 3+
+(4)
+
+7. 
+int range = 0 
+range = (int) score/10; 
+switch(range): 
+    case 10: 
+    case 9: 
+        cout << A
+    case 8: 
+    cout << b
+    break; 
+    case 7: 
+    cout << case
+    break;
+    case 6: 
+    cout << d 
+    break; 
+    default: 
+    cout << F
+
+8. 
+i = 0; 
+boolean notfound = true
+do{ 
+    if(islower(str[i])){ 
+        notfound = false
+    }
+i++
+}while( i < static_cast<int>(str.size()) && notfound )
+if (notfound)
+cout << "No lowercase character" << endl;
+else
+cout << str[i] << endl;

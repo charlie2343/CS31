@@ -1,0 +1,15 @@
+// check if two digit, followed by dir,  followed by /
+        if(c < dance.size() - 3){
+            if(isdigit(dance[c])){
+                if(isdigit(dance[c+1])){ // for case such as 333R/ func returns true, 
+                    if(isValidDir(dance[c+2])){
+                        if(dance[c+3] == '/'){
+                            ;
+                        }
+                        else{
+                            return false;
+                        }
+                    }
+                }
+            }
+        }

@@ -1,0 +1,17 @@
+1. Specific input integers that caused incorrect output: 
+When the input for numberSurveyed is 0, the hunters variable is set 5, and club variable is set to 5 the program then produces the nonsensical output of "infinity" for both
+the percentage of people that prefer "Demon hunters Club" and "Thursday murder club". This does not make sense as there cannot be infinite amount of people that prefer one club over the other. 
+
+
+2. Logic_error.cpp: 
+I included a for loop but I added a semicolon after the for loop condition so the statements inside the {}
+only execute once. While this produces no errors this is clearly a logic error. Instead of producing the correct value of the variable total_rating which represents the 
+"aggregate rating" of Kpop Demon Hunters it instead outputs the average rating. 
+
+3. Compile_error.cpp: 
+The first compile error is when I call the function This_is_an_awesome_compile_error_function_that_doesnt_exist("2 +2");
+The error is "This_is_an_awesome_compile_error_function_that_doesnt_exist was not declared in this scope". I never declared the function so the computer does not know what to do when I call the function. 
+The second error actually causes two compile errors.The first is an "error: expected primary-expression before '/'" error when I comment out "else" with one "/" instead of two. This error triggers due to the misplaced / when it expects an expression. 
+The second compile error is when the compile moves to the else after the / it does not recognize it as being paired with an if so it triggers another "error: expected expression primary-expression".
+
+     

@@ -1,0 +1,110 @@
+bool isSemanticallyCorrect(){ 
+   check case of max digit before letter 
+   set digit count = 1
+   check if not last part of string 
+   if str[index] adn next index = digit 
+        digit count = 2 
+    
+    if (digit count = 2 and next char not valid input){ 
+        return false
+    }
+    if (digit count = 2 and next char out of bounds){ 
+        return false; 
+    } 
+_____
+    if digit count = 1 and next char valid digit or dir
+
+//9d/
+if(s < dance.size() - 3){ 
+    if(isdigit(dance[s])){ 
+            if(isdigit(dance[s+1])){ 
+                if(isValidDir(dance[s+2])){ 
+                    if(dance[s+3] == '\'){
+                     pass 
+                    }
+                    else{
+                    return false;
+                    }
+                }
+            } 
+    } 
+
+if(s < dance.size() - 2){ 
+    if(isdigit(dance[s])){ 
+                if(isValidDir(dance[s+1])){ 
+                    if(dance[s+2] == '\'){
+                     pass 
+                    }
+                    else{
+                    return false;
+                    }
+                }
+         
+    } 
+
+    if(s < dance.size() - 1){ 
+
+                if(isValidDir(dance[s])){ 
+                    if(dance[s+1] == '\'){
+                     pass 
+                    }
+                    else{
+                    return false;
+                    }
+                }
+         
+    } 
+
+    in each digit case I am checking dir followed by / 
+
+
+
+
+                
+            
+
+    
+    pass
+    ifi digit count = 2 next char must be dir
+
+    check if valid character
+    check if followed by slash
+        yes: pass
+        no: return false
+    
+
+
+}
+
+
+
+________-----------------------------------
+single digit case: 
+repeatedly while i < size - 2: 
+xxxxXxx
+    if char is digit: 
+        check next char is valid dir and nextnext char is /: 
+
+
+
+
+    
+
+_________________________________________________________________
+Translatable simplifying cases. 
+
+intuitions: 
+    3r///  = r/r/r/
+    01r/ = r/ 
+    need num amount of beats after letter
+
+if first char c1 is digit but second not
+num = chartoNum(c1)
+if first and second digit
+num = 
+
+int charToNum(char c){ 
+
+}
+
+3. Assume dance digit, dir combo starts at diff index, followed by combo of slashes and chars 

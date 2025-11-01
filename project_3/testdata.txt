@@ -1,0 +1,18 @@
+""
+D/
+u//D/3r///d/
+03u///10r//////////
+///  
+
+
+incorrect syntax beats: 
+23Rr// ## char not followed by slash
+23423r// ## more than 2 digits
+2G// ## invalid dir check 
+//G ## another last character check
+
+0d/0d ##bypassing first check of dir + /, not checked by either digit case as, would return true if not for check on last character
+
+
+translate dance test: 
+d/r/D/2d/
