@@ -17,7 +17,7 @@ int main()
     //     cout << "Enter dance: ";
     //     string d;
     //     getline(cin, d);
-    //     if (d == "quit")
+    //     if (d == "quit"),
     //         break;
     //     cout << "isSyntacticallyCorrect returns " << endl;
     //     string inst = "ad";
@@ -160,6 +160,9 @@ int translateDance(string dance, string &instructions, int &badBeat)
     string temp = "";
     double freezeCount = 0;
     int totalBeats = 0;
+    string instr = "";
+    int freezeStopIndex =0;  
+
     for (int a = 0; a < length; a++)
     {
         if (dance[a] == '/')
@@ -180,10 +183,12 @@ int translateDance(string dance, string &instructions, int &badBeat)
                 return 2;
             }
             //!!!
-            if(freezeCount != 404){ 
-                cout << "I is: " << i << " Dance at i is: " << dance[i] << endl; 
-                for (int j = i; j < (i+freezeCount); j++)
-                {
+            //if temp is not "" or length 1. !(/ or dir)
+            if(freezeCount != 404){
+                freezeStopIndex = freezeCount + i;
+                cout << "I is: " << i << " Dance at i is: " << dance[i] << endl;
+                for (int j = i; j < freezeStopIndex; j++)
+                { 
                     cout << "Dance at j (T1): " << dance[j] << endl; 
                     if (j >= length)
                     {
@@ -195,7 +200,8 @@ int translateDance(string dance, string &instructions, int &badBeat)
                     else if(dance[j]== '/'){ 
                         //although counting / at index i twice, we miss final slash in this case, thus the count is correct
                         beatIndex++;
-                    } 
+                        instr += toupper(temp[temp.size() - 1]);
+                    }
                     else
                     {
                         cout << "Dance at j: " << dance[j] << endl; 
@@ -203,21 +209,25 @@ int translateDance(string dance, string &instructions, int &badBeat)
                         return 3;
                     }
                 }
+            } else if(static_cast<int>(temp.size()) ==1 && isValidDir(dance[i])){
+                instr += tolower(dance[i]);
             } 
-            
-
+            ///want to only write . if / not part of freeze
+            else if(temp == "" && i >= freezeStopIndex){
+                instr += '.';
+            }
             // check for premature freeze end via outofbounds
-            
             temp = "";
         }
         else
         {
             temp += dance[i];
-
-            
+            if(static_cast<int>(temp.size()) ==1 && isValidDir(dance[i])){
+                instr += tolower(dance[i]);
+            }
         }
     }
-
+    instructions = instr; 
     return 0;
 
     // but a beat specifies a freeze of length less than 2, badBeat is set to the number of that beat (where the first beat of the whole dance is number 1, etc.), and the function returns 2.

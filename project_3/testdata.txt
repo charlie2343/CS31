@@ -30,3 +30,8 @@ Premature ending due to not enough / or end of string:
 ///10r// ## should give error 4, badbeat = 6. 
 d/3r//u/ ## output should be 3, badBeat 4
 
+instruction translate tests: 
+    D/u/R/r/L/ ## durrl basic translate with no digits
+    R/3u///D/ 
+    u//d/3r///d/ 
+
