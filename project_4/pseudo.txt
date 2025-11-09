@@ -1,0 +1,133 @@
+loop repeadtley: 
+while next element same as cur do nothing: 
+else increase count; 
+
+
+split: 
+
+UPDate: 
+if val < splitter and != start: 
+move left one
+
+check: 
+loop list: 
+check if val < splitter come before all val >= splitter
+    --> yes: return poistion of firse >= val after rearrangement
+
+
+champs: blake
+champs: shohei // larger
+champs: freddie // less
+champs: will // larger 
+champs: max // less 
+
+
+
+
+ //! detect match 
+//     string guys[9] = {
+//     "teoscar", "tyler", "max", "max", "will", "will", "will", "max", "max"
+// };
+// int m = detectMatch(guys, 7, "will"); // returns 4
+// int p = detectMatch(guys, 4, "miguel"); // returns -1 (no "miguel" in first 4)
+// cout << m << endl; 
+// cout << p << endl; 
+
+
+
+ //! detect max
+// string people[5] = { "freddie", "will", "shohei", "yoshi", "mookie" };
+// int j = detectMax(people, 5);  // returns 3, since  yoshi  is latest
+//                                // in alphabetic order
+// cout << j << endl; 
+
+
+//!circle right 
+// string folks[5] = { "will", "shohei", "freddie", "miguel", "max" };
+// int m = circleLeft(folks, 5, 1);  // returns 1
+//     // folks now contains:  "will", "freddie", "miguel", "max", "shohei"
+// cout << "m: " << m << endl;
+// for (int i = 0; i < 5; i++){
+//     cout << folks[i] << endl; 
+// }
+
+//! enumerateRuns
+// string guys[9] = {
+//     "teoscar", "teoscar", "max", "max", "will", "will", "will", "max", "max"
+// };
+// int p = enumerateRuns(guys, 9);  //  returns 5
+//            //  The five sequences of consecutive identical items are
+//            //    "teoscar"
+//            //    "tyler"
+//            //    "max", "max"
+//            //    "will", "will", "will"
+//            //    "max", "max"
+// cout << p << endl;
+
+//!flip
+// string blue[6] = { "tyler", "andy", "", "blake", "max", "enrique" };
+// int q = flip(blue, 4);  // returns 4
+//     // blue now contains:  "blake"  ""  "andy"  "tyler"  "max"  "enrique"
+// for (int i = 0; i < 5; i++){
+//     cout << blue[i] << endl; 
+// }
+
+//!detect Difference; 
+// string z1[5] = { "freddie", "will", "shohei", "yoshi", "mookie" };
+// string z2[6] = { "freddie", "will", "blake", "yoshi", "mookie", "shohei" };
+// assert(detectDifference(z1, 5, z2, 6) ==2);  //  returns 2
+// assert(detectDifference(z1, 2, z2, 2) == 2); //  returns 2
+// cerr << "All tests passed. " << endl; 
+
+
+//!subsequence
+// string dodgers[10] = { "alex", "shohei", "andy", "mookie", "enrique", "tommy" };
+// string dodgers1[10] = { "shohei", "andy", "mookie" };
+// cout << "Output: " << subsequence(dodgers, 6, dodgers1, 3) << endl; 
+// assert(subsequence(dodgers, 6, dodgers1, 3) == 1); // returns 1
+// string dodgers2[10] = { "alex", "mookie" };
+// assert(subsequence(dodgers, 5, dodgers2, 2)==-1);  // returns -1
+
+//! detect any
+// string dodgers[10] = { "alex", "shohei", "andy", "mookie", "enrique", "tommy" };
+// string set1[10] = { "enrique", "emmet", "mookie", "shohei" };
+// int v = detectAny(dodgers, 6, set1, 4);  // returns 1 (a1 has "shohei" there)
+// string set2[10] = { "clayton", "justin" };
+// int w = detectAny(dodgers, 6, set2, 2);  // returns -1 (a1 has none)
+// cout << "v: " << v << endl;
+// cout << "w: " << w << endl; 
+
+//!splitter
+// string champs[6] = { "shohei", "blake", "will", "freddie", "yoshi", "max" };
+// int x = split(champs, 6, "miguel");  //  returns 3
+// cout << "x: " << x << endl; 
+
+
+// for (int i = 0; i < 6; i++){
+//     cout << "champs: " << champs[i] << endl; 
+// }
+
+
+
+// champs must now be
+//      "max"  "blake"  "freddie"  "yoshi"  "will"  "shohei"
+// or   "blake"  "freddie"  "max"  "shohei"  "yoshi"  "will"
+// or one of several other orderings.
+// All elements < "miguel" (i.e., "blake", "freddie", and "max")
+//   come before all others
+// All elements > "miguel" (i.e., "will"  "yoshi", and "shohei")
+//   come after all others
+
+// string champs2[4] = { "max", "yoshi", "blake", "shohei" };
+// int y = split(champs2, 4, "shohei");  //  returns 2
+
+
+// for (int i = 0; i < 4; i++){
+//     cout << "champs: " << champs2[i] << endl; 
+// }
+    // champs2 must now be either
+    //      "max"  "blake"  "shohei"  "yoshi"
+    // or   "blake"  "max"  "shohei"  "yoshi"
+    // All elements < "shohei" (i.e., "blake" and "max") come before all
+    // others.
+    // All elements > "shohei" (i.e., "yoshi") come after all others.
