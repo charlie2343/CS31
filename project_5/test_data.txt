@@ -10,3 +10,24 @@ much work; to accumulate work has almost become
 a passion with me: my study is so full of it now, that there is hardly
 an inch of room for any more.
 
+
+
+asdfa. bnmb lkjj sva;kljdvlaks. asdf as s
+This is useful for Project 5 if you choose to process
+the input character by character. Some people will use an approach that reads one line at a time into a C string:
+
+getline 
+
+
+DISCLAIMER: This is ONE way to do things we discussed, and there are multiple other ways to approach the problem!
+
+I'd first read in the first "line" --> say there are parts of a word that's dangling.
+--> As I iterate the line buffer, I'll check if any chars are not printed at the end.
+--> if such chars exist, I'll store in the portion buffer (you want to be careful how you set the "prev chars" & "portion lenth")
+--> and then you do the next getline, which may include portions of the last word from the previous getline (which you'll have in the portion buffer)
+--> you check if there are any pre-existing chars (from the previous read) in the portion buffer. If so, then (after checking for some conditions)
+you would either append the remaining chars of that word as you go through your new line buffer.
+
+
+
+portion = buffer for word

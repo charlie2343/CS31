@@ -1,3 +1,5 @@
-asdfa. bnmb lkjj sva;kljdvlaks. asdf as s
-This is useful for Project 5 if you choose to process
-the input character by character. Some people will use an approach that reads one line at a time into a C string:
+Let's
+    check    what
+ happens.  <P>
+
+Wow.

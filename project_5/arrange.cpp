@@ -44,14 +44,16 @@ void clearCstring(char arr[], int n){
     }
 }
 
-bool debug = true;
+bool debug = false;
 
 int arrange(int lineLength, istream &inf, ostream &outf)
 {
 
     const int MAX = lineLength + 1;
     char line[MAX];
-    while(){ 
+    while(inf.peek() != EOF){
+        inf.getline(line, MAX);
+        inf.clear();
         char portion[MAX];
         int portionLength = 0;
         int numCharsPrinted = 0; 
@@ -67,22 +69,24 @@ int arrange(int lineLength, istream &inf, ostream &outf)
                     pringCstring(portion);
                     cout << " ";
                 }else{
+                    
                     cout << '\n';
                 }
                 numCharsPrinted += portionLength;
-                numCharsPrinted++; 
+                numCharsPrinted++; ///Gets space added 
                 portionLength = 0;
                 clearCstring(portion, MAX);
                 // ! actually doesnt portion[0] = '\0'; // clears portion
             }
             else
             {
-                portionLength++; 
-                portion[i - numCharsPrinted] = line[i];
+                portionLength++; //portion length incremented
+                cout << "new index: " << i - numCharsPrinted << endl; 
+                portion[i - numCharsPrinted] = line[i]; // portion c-string reindexed refill @ 0
             }
         }
+        clearCstring(line, MAX);
     }
-
     cout << endl;
     if (lineLength < 1)
     {
