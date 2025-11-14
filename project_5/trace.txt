@@ -12,3 +12,37 @@ buffer[1] = {t}
 inf.get == ' ' --> c = ' ' 
 exit while lop 
 buffer[1] = '\0' 
+
+asdfa <P>
+qwert
+
+012345678
+
+i = 6
+buffer = "<P>" 
+____________________________________________________________
+input: asdfa and
+output: asdfa asdfa
+
+arrage{ 
+    portion <--- asdfa
+    prev portion = asdfa
+    i = 4 
+    charsprinted= 5
+    outf << asdfa + " " 
+    charsprint = 6
+
+2. 
+    prevportion = asdfa
+    portion = and
+
+    charsPrinted  = 9
+    9 > 6 --> true  
+        outf<< prevPortion 
+        outf << \n 
+
+}
+
+the problem is that preve portion is printing twice when it shoudl be printing once
+It is an inssure with the first loop case, if the loop havd more input 
+than output 

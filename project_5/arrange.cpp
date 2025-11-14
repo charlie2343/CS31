@@ -24,7 +24,7 @@ int main()
         int len;
         cin >> len;
         cin.ignore(10000, '\n');
-        int returnCode = arrange(len, infile, cout);
+        int returnCode = arrange(len, infile, outfile);
         cout << "Return code is " << returnCode << endl;
     }
 }
