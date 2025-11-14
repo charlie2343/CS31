@@ -1,0 +1,14 @@
+
+i = 6 
+charsprinted = 9 
+
+
+convertTOkesn()
+buffer --> portion 
+i = 0; 
+buffer[0] = {I}
+i = 1
+buffer[1] = {t}
+inf.get == ' ' --> c = ' ' 
+exit while lop 
+buffer[1] = '\0' 
