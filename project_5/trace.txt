@@ -46,3 +46,73 @@ arrage{
 the problem is that preve portion is printing twice when it shoudl be printing once
 It is an inssure with the first loop case, if the loop havd more input 
 than output 
+____________________________________________________________
+input: 
+It always does seem to me that I am doing more work than
+  I should do. It is not that I object to the work, mind you;
+I like work: it fascinates me. <P>      I can sit and look at it for hours.
+output: 
+It always does seem to me that I am doing
+more work than I should  do. It is not
+that I object to the work, mind you; I
+like  work: it fascinates  
+
+<P> I can sit and look at it for  hours. 
+
+trace: 
+prev portion = fascinates
+portion = me. 
+len =3 
+charsprinted = 22 + 3 = 25
+outf<< fascinates + " "
+
+prev poriton = me. 
+portion = <P>
+outf me.  
+outf /n/n 
+prev poriton = <P> 
+
+poriton = I 
+____________________________________________________________
+prevPortion = It
+char printed = 2 
+portion. = always
+charprinted = 8 
+8 > 7 --> true 
+outf << It. + \n
+charsprinted = 2 
+prevporiton = always
+
+
+portion = Error
+outf << always.  + '\n'
+
+<<<<<<
+prevPortion = It
+char printed = 2 
+portion. = always
+charprinted = 8 
+8 > 7 --> true 
+outf << It. + \n
+charsprinted = 2 
+prevporiton = always
+
+
+portion = Error
+outf << always.  + '\n'
+
+
+
+what isf I incremented charsprinted when  I fucking rint
+what if I check prevportion length when checking for overflow --> 
+can know if next will overflow thus can know when last word in line --> 
+print bad spaces 
+
+if I have charsPrinted be the future count I have to do shenanigans 
+____________________________________________________________
+cases: -so
+so-sdf
+so--dsdf
+
+
+
