@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
-
 #include <sstream>
 #include <streambuf>
 #include <cstring>
 #include <cassert>
+
 using namespace std;
 
 // #include <afxstr.h>
@@ -19,20 +19,20 @@ void testArrange(int lineLength, const char input[], const char expectedOutput[]
     istringstream iss(input);
     ostringstream oss;
     ostringstream dummy;
-    streambuf *origcerr = cerr.rdbuf(dummy.rdbuf());
+    streambuf *origcout = cout.rdbuf(dummy.rdbuf());
     int retval = arrange(lineLength, iss, oss);
-    cerr.rdbuf(origcerr);
+    cout.rdbuf(origcout);
     if (!dummy.str().empty())
-        cerr << "WROTE TO cout INSTEAD OF THIRD PARAMETER FOR: " << input << endl;
+        cout << "WROTE TO cout INSTEAD OF THIRD PARAMETER FOR: " << input << endl;
     else if (retval != expectedReturnValue)
-        cerr << "WRONG RETURN VALUE FOR: " << input << endl;
+        cout << "WRONG RETURN VALUE FOR: " << input << endl;
     else if (retval == 1)
     {
         if (!oss.str().empty())
-            cerr << "WROTE OUTPUT WHEN LINELENGTH IS " << lineLength << endl;
+            cout << "WROTE OUTPUT WHEN LINELENGTH IS " << lineLength << endl;
     }
     else if (oss.str() != expectedOutput)
-        cerr << "WRONG RESULT FOR: " << input << endl;
+        cout << "WRONG RESULT FOR: " << input << endl;
 }
 
 int main()
@@ -43,18 +43,18 @@ int main()
     // // cin.getline(filename, MAX_FILENAME_LENGTH);
     // // if (strcmp(filename, "q") == 0)
     // //     break;
-    // ifstream infile("input.txt");
-    // if (!infile)
-    // {
-    //     cerr << "Cannot open " << "input.txt" << "!" << endl;
-    //     /// continue;
-    // }
-    // ofstream outfile("results.txt"); // outfile is a name of our choosing.
-    // if (!outfile)                    // Did the creation fail?
-    // {
-    //     cerr << "Error: Cannot create results.txt!" << endl;
-    //     // ... return with failure ...
-    // }
+    ifstream infile("input.txt");
+    if (!infile)
+    {
+        cerr << "Cannot open " << "input.txt" << "!" << endl;
+        /// continue;
+    }
+    ofstream outfile("results.txt"); // outfile is a name of our choosing.
+    if (!outfile)                    // Did the creation fail?
+    {
+        cerr << "Error: Cannot create results.txt!" << endl;
+        // ... return with failure ...
+    }
     // cerr << "Enter maximum line length: ";
     // int len;
     // cin >> len;
@@ -72,7 +72,11 @@ int main()
     // // }
     // // cerr << "EOF"<< endl;
 
+    arrange(20, infile, outfile);
     testArrange(7, "This\n\t\tis a\ntest\n", "This is\na test\n", 0);
+    testArrange(3, "s-----. ", "s-\n- -\n- -\n.\n", 0);
+    testArrange(10, ". . .", ".  .  .\n", 0);
+    //testArrange(40, "It always does seem to me that I am doing more work than\n  I should do. It is not that I object to the work, mind you;\nI like work: it fascinates me.       I can sit and look at it for hours.\nI love to keep     it by me: the idea of getting\nrid\nof it nearly breaks my heart. <P> You cannot give me too\nmuch work; to accumulate work has almost become\n\n\na passion with me: my study is so full of it now, that there is hardly change newline/any other excape chars to their excape chars\nan inch of room for any more.\n","It always does seem to me that I am\ndoing more work than I should do.  It is\nnot that I object to the work, mind you;\nI like work:  it fascinates me.  I can\nsit and look at it for hours.  I love to\nkeep it by me:  the idea of getting rid\nof it nearly breaks my heart.\n\nYou cannot give me too much work; to\naccumulate work has almost become a\npassion with me:  my study is so full of\nit now, that there is hardly an inch of\nroom for any more.\n", 0);
     testArrange(8, "  This is a test  \n", "This is\na test\n", 0);
     testArrange(-5, "irrelevant", "irrelevant", 1);
     testArrange(6, "Testing it\n", "Testin\ng it\n", 2);
@@ -166,7 +170,12 @@ int arrange(int lineLength, istream &inf, ostream &outf)
         {
             // outf << "Final word: " << prevPortion;
             handleOverflow(prevPortion, lineLength, charCount, outf, overflow);
-            outf << prevPortion << '\n';
+            if(strcmp(prevPortion, "<P>") ==0)
+                break; 
+            else
+            {
+                outf << prevPortion << '\n';
+            }
             break;
         }
 
@@ -181,6 +190,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
         // not space
         else if (strcmp(prevPortion, "<P>") != 0)
         {
+            prevParagraph = false;
             int len;
             len = strlen(portion);
             int prevlen;
@@ -209,7 +219,6 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             }
         }
         strcpy(prevPortion, portion);
-        prevParagraph = false;
     }
     cerr << '\n';
     // cerr << "Total Chars Printed: " << charCount << endl;
@@ -218,51 +227,40 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     return 0;
 }
 
-bool convertTokens(char buffer[], istream &inf)
+bool convertTokens(char buffer[], istream& inf)
 {
     char c;
     int i = 0;
-    // EOF return false
-    if (!inf)
-    {
-        return false;
-    }
 
-    while (inf.get(c) && (c == ' ' || c == '\n'))
+    if (!inf)
+        return false;
+
+    // Skip spaces, newlines, tabs
+    while (inf.get(c) && (c == ' ' || c == '\n' || c == '\t'))
         ;
 
-    buffer[i] = c;
-    if (c == ' ')
-    {
-        buffer[0] = '\0';
-    }
+    // If we hit EOF while skipping whitespace
+    if (!inf)
+        return false;
 
-    if (c == '-')
-    {
-        buffer[i + 1] = '\0';
+    buffer[i++] = c;
+
+    // If the word portion is just "-"
+    if (c == '-') {
+        buffer[i] = '\0';
         return true;
     }
-    i++;
 
-    while (inf.get(c) && c != ' ' && c != '\n')
+    // Read rest of portion until space/newline/tab OR a hyphen
+    while (inf.get(c) && c != ' ' && c != '\n' && c != '\t')
     {
-
-        buffer[i] = c;
-        if (c == '-')
-        {
-            buffer[i + 1] = '\0';
+        buffer[i++] = c;
+        if (c == '-') {
+            buffer[i] = '\0';
             return true;
         }
-        i++;
     }
-    buffer[i] = '\0';
-    // debug print
-    if (strcmp(buffer, " ") == 0)
-    {
-        cerr << "Space found!";
-    }
-    // cerr << "Buffer: " << buffer << endl;
-    return true;
 
-    // else fill buffer with word
+    buffer[i] = '\0';
+    return true;
 }

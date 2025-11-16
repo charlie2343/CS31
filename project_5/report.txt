@@ -1,0 +1,58 @@
+a. One obstacle I overcame was not printing spaces if the word would be the last portion on the line. To solve this I restructered my code to store both the current poriton and the next portion. By having both portions I could check if a word was the last on the line, and not add the spaces. 
+It was also difficult to properly get my word processing function getPortion() to work in a way that only got valid words. I initially used infile.getline() however this made indexing a pain as I would have to reindex to store each word in a buffer, and I had to realize to clear my getline to continue reading the line if it exceed maxLength. 
+
+b. Pseudo code for project: 
+convertTokens(){ 
+    check if EOF
+    while char is space, skip
+    while char is not space, tab, newline
+        save to buffer
+        if char is -
+            terminate buffer
+    terminate buffer
+    return true if success, false if EOF
+
+        
+}
+arrange(){ 
+    load prevtoken with first work
+    loop continuosly: 
+        attempt to get next token
+          cant-->  write prev token and exit loop  
+          can --> 
+          check if prevtoken overflows, call handleOverflow
+          if prevtoken last on line
+            write prevtoken skip adding spaces, add newline
+          else: 
+            check if paragraph + double paragraph sequence, handle to spec. 
+            else if write spaces based on punctuation 
+            increment counter tracking chars printed. 
+            update prevToken to currentToken
+}
+
+handleOverflow(){ 
+    if portion > linelength 
+    split portion up to linelength 
+    output that and newline
+    save rest of portion to argument passed
+}
+
+c.
+test cases: 
+s-----.
+result: 
+s-
+- -
+- -
+.
+
+
+if portion is <P> and prev is not paragraph
+    wrtie two newline
+
+want: 
+now paragraph trigger if next poriton is EOF
+
+if portion is <P> and prev is not paragraph then output lines
+
+
