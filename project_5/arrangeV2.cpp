@@ -55,9 +55,9 @@ int main()
         cerr << "Error: Cannot create results.txt!" << endl;
         // ... return with failure ...
     }
-    // cerr << "Enter maximum line length: ";
-    // int len;
-    // cin >> len;
+    cerr << "Enter maximum line length: ";
+    int len;
+    cin >> len;
     // cin.ignore(10000, '\n');
     // int returnCode = arrange(len, infile, outfile);
     // cerr << "Return code is " << returnCode << endl;
@@ -72,7 +72,7 @@ int main()
     // // }
     // // cerr << "EOF"<< endl;
 
-    arrange(20, infile, outfile);
+    cerr << "return value: " << arrange(len, infile, outfile)<< endl;
     // testArrange(7, "This\n\t\tis a\ntest\n", "This is\na test\n", 0);
     // testArrange(3, "s-----. ", "s-\n- -\n- -\n.\n", 0);
     // testArrange(10, ". . .", ".  .  .\n", 0);
@@ -107,6 +107,7 @@ void substring(char source[], char dest[], int start, int end)
 
 void handleOverflow(char portion[], int lineLength, int &charCount, ostream &outf, bool &overflow)
 {
+    
     int j = strlen(portion);
     char temp[125];
 
@@ -115,6 +116,7 @@ void handleOverflow(char portion[], int lineLength, int &charCount, ostream &out
         strncpy(temp, portion, lineLength);
         temp[lineLength] = '\0';
         outf << temp << "\n";
+        ///cerr << "PENIS: " << endl; 
 
         // SAFE replace of substring(portion, portion, ...)
         int remain = j - lineLength;
@@ -179,14 +181,13 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             }
             break;
         }
-        //! set paragraph found 
-        if(strcmp(prevPortion, "<P>") == 0){
-            paragraphFound = true;
-            charCount += 4; // space + 3
-        }
-        cout << "paragraph Found: " << paragraphFound << endl;
-        if (strcmp(portion, "<P>") == 0 && paragraphFound)
+        //cout << "paragraph Found: " << paragraphFound << endl;
+        if (strcmp(portion, "<P>") == 0 || paragraphFound)
         {
+            if(strcmp(portion, "<P>") == 0 && strcmp(prevPortion, "<P>") != 0){
+                outf << prevPortion; 
+            }
+            strcpy(prevPortion, portion);
             continue; 
             // cerr << "Paragraph found" << endl;
             //outf << prevPortion;
@@ -194,7 +195,12 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             charCount = 0;
             paragraphFound = true;
         }
-
+        
+        //! set paragraph found 
+        if(strcmp(prevPortion, "<P>") == 0){
+            paragraphFound = true;
+            charCount += 4; // space + 3
+        }
 
         //! process words
         else if (strcmp(prevPortion, "<P>") != 0)
@@ -210,13 +216,10 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             charCount += len; // i is index, leng
             if (charCount > lineLength)
             {
+                cerr << "Line split, prev poriton: " << prevPortion<<endl; 
                 outf << prevPortion;
                 outf << '\n';
                 charCount = len;
-            }
-            //if paragraph found and word next output two newline
-            if(paragraphFound == true){
-                outf << "\n\n";
             }
             // cerr << "Last index of portion: " << i << " with val " << portion[i] << endl;
             else if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
@@ -226,11 +229,17 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             }
             else
             {
+                cerr << "output " << prevPortion<<endl;
                 outf << prevPortion << " ";
                 charCount++; // gets the whitespace
             }
-            paragraphFound = false;
         }
+        //if paragraph found and word next output two newline
+            if(paragraphFound == true){
+                charCount = 0; 
+                outf << "\n\n";
+            }
+            paragraphFound = false;
         strcpy(prevPortion, portion);
     }
     cerr << '\n';
