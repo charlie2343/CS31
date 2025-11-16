@@ -56,3 +56,6 @@ now paragraph trigger if next poriton is EOF
 if portion is <P> and prev is not paragraph then output lines
 
 
+example: 
+hi <P> 
+

@@ -73,13 +73,13 @@ int main()
     // // cerr << "EOF"<< endl;
 
     arrange(20, infile, outfile);
-    testArrange(7, "This\n\t\tis a\ntest\n", "This is\na test\n", 0);
-    testArrange(3, "s-----. ", "s-\n- -\n- -\n.\n", 0);
-    testArrange(10, ". . .", ".  .  .\n", 0);
-    //testArrange(40, "It always does seem to me that I am doing more work than\n  I should do. It is not that I object to the work, mind you;\nI like work: it fascinates me.       I can sit and look at it for hours.\nI love to keep     it by me: the idea of getting\nrid\nof it nearly breaks my heart. <P> You cannot give me too\nmuch work; to accumulate work has almost become\n\n\na passion with me: my study is so full of it now, that there is hardly change newline/any other excape chars to their excape chars\nan inch of room for any more.\n","It always does seem to me that I am\ndoing more work than I should do.  It is\nnot that I object to the work, mind you;\nI like work:  it fascinates me.  I can\nsit and look at it for hours.  I love to\nkeep it by me:  the idea of getting rid\nof it nearly breaks my heart.\n\nYou cannot give me too much work; to\naccumulate work has almost become a\npassion with me:  my study is so full of\nit now, that there is hardly an inch of\nroom for any more.\n", 0);
-    testArrange(8, "  This is a test  \n", "This is\na test\n", 0);
-    testArrange(-5, "irrelevant", "irrelevant", 1);
-    testArrange(6, "Testing it\n", "Testin\ng it\n", 2);
+    // testArrange(7, "This\n\t\tis a\ntest\n", "This is\na test\n", 0);
+    // testArrange(3, "s-----. ", "s-\n- -\n- -\n.\n", 0);
+    // testArrange(10, ". . .", ".  .  .\n", 0);
+    // //testArrange(40, "It always does seem to me that I am doing more work than\n  I should do. It is not that I object to the work, mind you;\nI like work: it fascinates me.       I can sit and look at it for hours.\nI love to keep     it by me: the idea of getting\nrid\nof it nearly breaks my heart. <P> You cannot give me too\nmuch work; to accumulate work has almost become\n\n\na passion with me: my study is so full of it now, that there is hardly change newline/any other excape chars to their excape chars\nan inch of room for any more.\n","It always does seem to me that I am\ndoing more work than I should do.  It is\nnot that I object to the work, mind you;\nI like work:  it fascinates me.  I can\nsit and look at it for hours.  I love to\nkeep it by me:  the idea of getting rid\nof it nearly breaks my heart.\n\nYou cannot give me too much work; to\naccumulate work has almost become a\npassion with me:  my study is so full of\nit now, that there is hardly an inch of\nroom for any more.\n", 0);
+    // testArrange(8, "  This is a test  \n", "This is\na test\n", 0);
+    // testArrange(-5, "irrelevant", "irrelevant", 1);
+    // testArrange(6, "Testing it\n", "Testin\ng it\n", 2);
     cerr << "Tests complete" << endl;
 }
 void clearCstring(char arr[], int n)
@@ -126,7 +126,7 @@ void handleOverflow(char portion[], int lineLength, int &charCount, ostream &out
         charCount = j; // leftover counts toward next line
     }
 }
-
+//!
 int arrange(int lineLength, istream &inf, ostream &outf)
 {
     if (lineLength < 1)
@@ -137,7 +137,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     char prevPortion[125];
     char temp[125];
     int i;
-    bool prevParagraph = false;
+    bool paragraphFound = false;
     bool overflow = false;
     // bool firstRun = true;
     if (!convertTokens(prevPortion, inf))
@@ -161,7 +161,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     }
     //
     // cerr << "Modified first poriton: " << prevPortion << "....." <<endl;
-
+    //!! enter loop
     charCount += strlen(prevPortion);
     for (;;)
     {
@@ -170,27 +170,35 @@ int arrange(int lineLength, istream &inf, ostream &outf)
         {
             // outf << "Final word: " << prevPortion;
             handleOverflow(prevPortion, lineLength, charCount, outf, overflow);
-            if(strcmp(prevPortion, "<P>") ==0)
+            if(paragraphFound)
                 break; 
+                //! outf<< '\n';
             else
             {
                 outf << prevPortion << '\n';
             }
             break;
         }
-
-        if (strcmp(portion, "<P>") == 0 && !prevParagraph)
+        //! set paragraph found 
+        if(strcmp(prevPortion, "<P>") == 0){
+            paragraphFound = true;
+            charCount += 4; // space + 3
+        }
+        cout << "paragraph Found: " << paragraphFound << endl;
+        if (strcmp(portion, "<P>") == 0 && paragraphFound)
         {
+            continue; 
             // cerr << "Paragraph found" << endl;
-            outf << prevPortion;
+            //outf << prevPortion;
             outf << "\n\n";
             charCount = 0;
-            prevParagraph = true;
+            paragraphFound = true;
         }
-        // not space
+
+
+        //! process words
         else if (strcmp(prevPortion, "<P>") != 0)
         {
-            prevParagraph = false;
             int len;
             len = strlen(portion);
             int prevlen;
@@ -206,6 +214,10 @@ int arrange(int lineLength, istream &inf, ostream &outf)
                 outf << '\n';
                 charCount = len;
             }
+            //if paragraph found and word next output two newline
+            if(paragraphFound == true){
+                outf << "\n\n";
+            }
             // cerr << "Last index of portion: " << i << " with val " << portion[i] << endl;
             else if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
             {
@@ -217,6 +229,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
                 outf << prevPortion << " ";
                 charCount++; // gets the whitespace
             }
+            paragraphFound = false;
         }
         strcpy(prevPortion, portion);
     }

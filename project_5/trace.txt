@@ -115,4 +115,67 @@ so-sdf
 so--dsdf
 
 
+hi <P>
+hi |
+
+
+prevPortion = hi
+portion = <P> 
+outf<< hi | 
+
+** I need to check 
+prevPortion = <P> 
+Portion = EOF
+break; 
+
+
+hi <P> <P> <P> 
+hi 
+
+
+|
+prevportion = hi 
+poriton = <P> 
+charcount = 2 
+outf << hi |
+prevportion = <P> 
+portion = <P> 
+outf << \n\n
+
+that has erorr where it doesnt check EOF
+
+if next portion is p 
+continue 
+if prev poriton is P and curr portion is not P or EOF
+write two newline
+
+
+functionality: 
+if 2/more P print onen P if not EOF after Ps 
+
+
+if P hit trigger flag 
+if flag and P hit 
+continue 
+if flag and EOF hit
+  dont do any added newline
+else if flag and word
+  write two newline
+
+if()
+
+____________________________________________________________
+input 20, string
+
+trac: 
+paragraphfound = false
+prevportion = hi 
+charcount = 3
+portion = <P>
+charcount = 6 
+
+paragraphfound = false
+
+edit: 
+paragraph found 
 
