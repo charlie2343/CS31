@@ -72,7 +72,7 @@ int main()
     // // }
     // // cerr << "EOF"<< endl;
 
-    cerr << "return value: " << arrange(len, infile, outfile)<< endl;
+    cerr << "return value: " << arrange(len, infile, outfile) << endl;
     // testArrange(7, "This\n\t\tis a\ntest\n", "This is\na test\n", 0);
     // testArrange(3, "s-----. ", "s-\n- -\n- -\n.\n", 0);
     // testArrange(10, ". . .", ".  .  .\n", 0);
@@ -107,7 +107,7 @@ void substring(char source[], char dest[], int start, int end)
 
 void handleOverflow(char portion[], int lineLength, int &charCount, ostream &outf, bool &overflow)
 {
-    
+
     int j = strlen(portion);
     char temp[125];
 
@@ -116,7 +116,7 @@ void handleOverflow(char portion[], int lineLength, int &charCount, ostream &out
         strncpy(temp, portion, lineLength);
         temp[lineLength] = '\0';
         outf << temp << "\n";
-        ///cerr << "PENIS: " << endl; 
+        /// cerr << "PENIS: " << endl;
 
         // SAFE replace of substring(portion, portion, ...)
         int remain = j - lineLength;
@@ -129,127 +129,131 @@ void handleOverflow(char portion[], int lineLength, int &charCount, ostream &out
     }
 }
 //!
-int arrange(int lineLength, istream &inf, ostream &outf)
+int arrange(int lineLength, istream& inf, ostream& outf)
 {
     if (lineLength < 1)
-        return 1;
-    char c;
-    char portion[125];
-    int charCount = 0;
-    char prevPortion[125];
-    char temp[125];
-    int i;
-    bool paragraphFound = false;
-    bool overflow = false;
-    // bool firstRun = true;
-    if (!convertTokens(prevPortion, inf))
-    {
-        return 0;
-    }
-    int j = strlen(prevPortion);
-    char lastChar = prevPortion[j - 1];
-    if (lastChar == '.' || lastChar == '?' || lastChar == ':')
-    {
-        // prevPortion[j + 1] = ' ';
-        // prevPortion[j] = ' ';
-        // prevPortion[j + 2] = '\0';
-        charCount += 2;
-    }
-    else
-    {
-        charCount++;
-        // prevPortion[j + 1] = '\0';
-        // prevPortion[j] = ' ';
-    }
-    //
-    // cerr << "Modified first poriton: " << prevPortion << "....." <<endl;
-    //!! enter loop
-    charCount += strlen(prevPortion);
-    for (;;)
-    {
+        return 1;  // per spec: no output, just return 1
 
-        if (!convertTokens(portion, inf))
-        {
-            // outf << "Final word: " << prevPortion;
-            handleOverflow(prevPortion, lineLength, charCount, outf, overflow);
-            if(paragraphFound)
-                break; 
-                //! outf<< '\n';
-            else
-            {
-                outf << prevPortion << '\n';
+    char token[125];
+    int charCount = 0;                 // chars so far on current line
+    bool overflowOccurred = false;     // did we ever split a word portion?
+    bool seenAnyWord = false;          // have we output any real word portion?
+    bool pendingParagraphBreak = false;// saw <P> after some words
+    char lastWordLastChar = '\0';      // last char of last printed word portion
+
+    while (convertTokens(token, inf)) {
+        // Handle paragraph marker <P>
+        if (strcmp(token, "<P>") == 0) {
+            // Only matters if we've already had at least one word
+            if (seenAnyWord) {
+                pendingParagraphBreak = true;
             }
-            break;
-        }
-        //cout << "paragraph Found: " << paragraphFound << endl;
-        if (strcmp(portion, "<P>") == 0 || paragraphFound)
-        {
-            if(strcmp(portion, "<P>") == 0 && strcmp(prevPortion, "<P>") != 0){
-                outf << prevPortion; 
-            }
-            strcpy(prevPortion, portion);
-            continue; 
-            // cerr << "Paragraph found" << endl;
-            //outf << prevPortion;
-            outf << "\n\n";
-            charCount = 0;
-            paragraphFound = true;
-        }
-        
-        //! set paragraph found 
-        if(strcmp(prevPortion, "<P>") == 0){
-            paragraphFound = true;
-            charCount += 4; // space + 3
+            // ignore leading <P> and multiple consecutive <P>
+            continue;
         }
 
-        //! process words
-        else if (strcmp(prevPortion, "<P>") != 0)
-        {
-            int len;
-            len = strlen(portion);
-            int prevlen;
-            prevlen = strlen(prevPortion);
-            // check for overflow:
-            // cerr << "charCount: " << charCount << " LEN: " << len << endl;
-            // cerr << charCount << ',' << lineLength << endl;
-            handleOverflow(prevPortion, lineLength, charCount, outf, overflow);
-            charCount += len; // i is index, leng
-            if (charCount > lineLength)
-            {
-                cerr << "Line split, prev poriton: " << prevPortion<<endl; 
-                outf << prevPortion;
+        // Now token is a real word portion
+        seenAnyWord = true;
+        int L = strlen(token);
+        if (L == 0)
+            continue;  // defensive guard
+
+        // Apply a pending paragraph break *before* printing this word
+        if (pendingParagraphBreak) {
+            if (charCount > 0) {
+                // finish the current line
                 outf << '\n';
-                charCount = len;
+                charCount = 0;
             }
-            // cerr << "Last index of portion: " << i << " with val " << portion[i] << endl;
-            else if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
-            {
-                outf << prevPortion << "  ";
-                charCount += 2;
+            // blank line between paragraphs (but not before first)
+            outf << '\n';
+            charCount = 0;
+            pendingParagraphBreak = false;
+        }
+
+        // If this word portion is longer than the line length, split it
+        if (L > lineLength) {
+            overflowOccurred = true;
+
+            // If there's stuff on the current line, finish it first
+            if (charCount > 0) {
+                outf << '\n';
+                charCount = 0;
             }
-            else
-            {
-                cerr << "output " << prevPortion<<endl;
-                outf << prevPortion << " ";
-                charCount++; // gets the whitespace
+
+            int start = 0;
+            // Full-length chunks, each on its own line
+            while (L - start > lineLength) {
+                for (int i = 0; i < lineLength; i++)
+                    outf << token[start + i];
+                outf << '\n';
+                charCount = 0;
+                start += lineLength;
+            }
+
+            int remain = L - start;
+            if (remain > 0) {
+                // Remaining part becomes the start of a new line
+                for (int i = 0; i < remain; i++)
+                    outf << token[start + i];
+                charCount = remain;
+                lastWordLastChar = token[L - 1];  // last char of whole portion
+            } else {
+                // Exactly divisible; we're at line start again
+                lastWordLastChar = '\0';
+            }
+
+            continue;  // move to next token
+        }
+
+        // Normal word portion (L <= lineLength)
+
+        if (charCount == 0) {
+            // First word on the line: no leading spaces
+            outf << token;
+            charCount = L;
+            lastWordLastChar = token[L - 1];
+        } else {
+            // Choose 1 or 2 spaces based on punctuation
+            int spaces = (lastWordLastChar == '.' ||
+                          lastWordLastChar == '?' ||
+                          lastWordLastChar == ':') ? 2 : 1;
+
+            // Would spaces + this word overflow the line?
+            if (charCount + spaces + L > lineLength) {
+                // Move to next line, no leading spaces
+                outf << '\n';
+                charCount = 0;
+                outf << token;
+                charCount = L;
+                lastWordLastChar = token[L - 1];
+            } else {
+                // Same line: print spaces then the word
+                for (int i = 0; i < spaces; i++)
+                    outf << ' ';
+                charCount += spaces;
+
+                outf << token;
+                charCount += L;
+                lastWordLastChar = token[L - 1];
             }
         }
-        //if paragraph found and word next output two newline
-            if(paragraphFound == true){
-                charCount = 0; 
-                outf << "\n\n";
-            }
-            paragraphFound = false;
-        strcpy(prevPortion, portion);
     }
-    cerr << '\n';
-    // cerr << "Total Chars Printed: " << charCount << endl;
-    if (overflow)
+
+    // End of input: if there's an unfinished line, terminate it with '\n'
+    if (charCount > 0) {
+        outf << '\n';
+    }
+
+    // If no words at all (only whitespace and/or <P>), we correctly wrote nothing.
+    // Just return 0 or 2 depending on overflow.
+    if (overflowOccurred)
         return 2;
     return 0;
 }
 
-bool convertTokens(char buffer[], istream& inf)
+
+bool convertTokens(char buffer[], istream &inf)
 {
     char c;
     int i = 0;
@@ -268,7 +272,8 @@ bool convertTokens(char buffer[], istream& inf)
     buffer[i++] = c;
 
     // If the word portion is just "-"
-    if (c == '-') {
+    if (c == '-')
+    {
         buffer[i] = '\0';
         return true;
     }
@@ -277,7 +282,8 @@ bool convertTokens(char buffer[], istream& inf)
     while (inf.get(c) && c != ' ' && c != '\n' && c != '\t')
     {
         buffer[i++] = c;
-        if (c == '-') {
+        if (c == '-')
+        {
             buffer[i] = '\0';
             return true;
         }

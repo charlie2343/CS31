@@ -1,0 +1,302 @@
+a. One obstacle I overcame was not printing spaces if the word would be the last portion on the line. To solve this I restructered my code to store both the current poriton and the next portion. By having both portions I could check if a word was the last on the line, and not add the spaces. 
+It was also difficult to properly get my word processing function getPortion() to work in a way that only got valid words. I initially used infile.getline() however this made indexing a pain as I would have to reindex to store each word in a buffer, and I had to realize to clear my getline to continue reading the line if it exceed maxLength. 
+
+b. Pseudo code for project: 
+convertTokens(){ 
+    check if EOF
+    while char is space, skip
+    while char is not space, tab, newline
+        save to buffer
+        if char is -
+            terminate buffer
+    terminate buffer
+    return true if success, false if EOF
+
+        
+}
+arrange(){ 
+    load prevtoken with first work
+    loop continuosly: 
+        attempt to get next token
+          cant-->  write prev token and exit loop  
+          can --> 
+          check if prevtoken overflows, call handleOverflow
+          if prevtoken last on line
+            write prevtoken skip adding spaces, add newline
+          else: 
+            check if paragraph + double paragraph sequence, handle to spec. 
+            else if write spaces based on punctuation 
+            increment counter tracking chars printed. 
+            update prevToken to currentToken
+}
+
+handleOverflow(){ 
+    if portion > linelength 
+    split portion up to linelength 
+    output that and newline
+    save rest of portion to argument passed
+}
+
+c.
+----------------------------------------
+TEST CASE 1 — Basic single-line fitting
+----------------------------------------
+Input:
+Hello world
+
+Expected output:
+Hello world
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 2 — Simple wrapping
+----------------------------------------
+Input:
+This is a test
+
+Expected output:
+This is
+a test
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 3 — Punctuation adds two spaces
+----------------------------------------
+Input: ( line length = 13)
+Hello. world test 
+
+Expected output:
+Hello.  world
+test
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 4 — Hyphenated words (two portions)
+----------------------------------------
+Input:
+so-called
+
+Expected output:
+so-
+called
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 5 — Multiple hyphens (pathological)
+----------------------------------------
+Input:
+(linelenght = 3)
+so--called
+
+Expected output:
+so-
+-
+cal
+led
+
+Return: 2
+
+
+----------------------------------------
+TEST CASE 6 — Word portion too long
+----------------------------------------
+Input:
+abcd
+
+Expected output:
+abc
+d
+
+Return: 2
+
+
+----------------------------------------
+TEST CASE 7 — <P> basic paragraph break
+----------------------------------------
+Input:
+Hello world <P> this is test
+
+Expected output:
+Hello
+world
+
+this is
+test
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 8 — Multiple <P> collapse to ONE
+----------------------------------------
+Input:
+Hello <P> <P> <P> world
+
+Expected output:
+Hello
+
+world
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 9 — <P> at EOF
+----------------------------------------
+Input:
+Hello world <P>
+
+Expected output:
+Hello world
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 10 — Only <P>
+----------------------------------------
+Input:
+<P>
+
+Expected output:
+(empty)
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 11 — <P> attached to non-whitespace (NOT a break)
+----------------------------------------
+Input:
+banjo<P>test
+
+Expected output:
+banjo<P>test
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 12 — Empty input
+----------------------------------------
+Input:
+(empty)
+
+Expected output:
+(empty)
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 13 — Whitespace-only input
+----------------------------------------
+Input:
+      
+\t \n \t
+
+Expected output:
+(empty)
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 14 — Tabs + newlines skipped properly
+----------------------------------------
+Input:
+    \t\tHello   world
+
+Expected output:
+Hello
+world
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 15 — No trailing spaces on last line
+----------------------------------------
+Input:
+Hello world
+
+Expected output:
+Hello world
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 16 — Each word fits alone (lineLength=1)
+----------------------------------------
+Input:
+a b c
+
+Expected output:
+a
+b
+c
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 17 — Invalid lineLength (<1)
+----------------------------------------
+Input:
+irrelevant
+
+Expected output:
+irrelevant  (i.e., untouched input stream)
+
+Return: 1
+
+
+----------------------------------------
+TEST CASE 18 — Period spacing rule
+----------------------------------------
+Input:
+Hi. Yo. Test
+
+Expected output:
+Hi.  Yo.
+Test
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 19 — Paragraph then EOF
+----------------------------------------
+Input:
+Hello <P>
+
+Expected output:
+Hello
+
+Return: 0
+
+
+----------------------------------------
+TEST CASE 20 — Paragraphs before any words
+----------------------------------------
+Input:
+<P> <P> <P> hi
+
+Expected output:
+hi
+
+Return: 0
+
+
+
+
+

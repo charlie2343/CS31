@@ -219,3 +219,14 @@ prevportion = is
 continue
 
 how do I save P 
+if portion is <P> and prev is not paragraph
+    wrtie two newline
+
+want: 
+now paragraph trigger if next poriton is EOF
+
+if portion is <P> and prev is not paragraph then output lines
+
+
+example: 
+hi <P> 
