@@ -261,6 +261,22 @@ nextIsParagraph = true;
 14< 20
 
 
+prevPortion = 12345
+charsprinted = 5
+portion = 123456
+5 + 6 + 1 < 18
+outf << 12345
+charsprinted += 5 + 1
+charsprinted = 11
+
+error: 
+charsprinted initally set to length of first word. 
+however length and space is added to it again during puntuation
+after that it is filename
+need intial set to confirm line spacing of first word
+solve 
+
+
 confusion: 
 if ever hit <P> set flag, if next is P and flag just continue
 ** however we do not save word before <P> sequence 

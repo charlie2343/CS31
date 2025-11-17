@@ -181,6 +181,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             {
                 paragraphFound = true;
             }
+            charsPrinted = strlen(prevPortion);
         }
 
         handleOverflow(prevPortion, lineLength, charsPrinted, outf, overflow);
@@ -256,6 +257,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
         // CHeck EOL condition
         if (charsPrinted + strlen(portion) > lineLength)
         {
+           // cerr << "Portion: " 
             outf << prevPortion << '\n';
             charsPrinted = 0;
             strcpy(prevPortion, portion);
@@ -281,6 +283,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             {
                 outf << prevPortion << " ";
                 charsPrinted += 1 + prevlen; // gets the whitespace
+                cerr << "charsPrinted: " << charsPrinted << endl;
             }
             // cerr << "Prev portion: " << prevPortion << " Chars printed: " << charsPrinted << endl;
         }
