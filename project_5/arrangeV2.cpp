@@ -140,6 +140,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     bool paragraphFound = false;
     bool nextIsParagraph = false; 
     bool overflow = false;
+    int spacing = 0; 
     // bool firstRun = true;
 
     // if (!convertTokens(prevPortion, inf))
@@ -254,8 +255,21 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             continue;
         }
 
-        // CHeck EOL condition
-        if (charsPrinted + strlen(portion) > lineLength)
+        
+        //! error does not account for puntuated spacing properly 
+        int prevlen = 0;
+        prevlen = strlen(prevPortion);
+        if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
+        {
+            spacing = 2; 
+        }
+        else
+        {
+            spacing = 1;
+            
+        }
+// CHeck EOL condition
+        if (charsPrinted + strlen(portion) + spacing > lineLength)
         {
            // cerr << "Portion: " 
             outf << prevPortion << '\n';
@@ -272,18 +286,16 @@ int arrange(int lineLength, istream &inf, ostream &outf)
        // else if (strcmp(prevPortion, "<P>") != 0)
        else
         {
-            int prevlen = 0;
-            prevlen = strlen(prevPortion);
-            if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
+            charsPrinted += prevlen + spacing;
+            cerr << "Prev Portion: " << prevPortion << endl; 
+            cerr << "charsPrinted: " << charsPrinted << endl;
+            outf << prevPortion;
+            if (spacing == 2)
             {
-                outf << prevPortion << "  ";
-                charsPrinted += 2 + prevlen;
+                outf << "  ";
             }
-            else
-            {
-                outf << prevPortion << " ";
-                charsPrinted += 1 + prevlen; // gets the whitespace
-                cerr << "charsPrinted: " << charsPrinted << endl;
+            else if(spacing == 1){ 
+                outf << " ";
             }
             // cerr << "Prev portion: " << prevPortion << " Chars printed: " << charsPrinted << endl;
         }
@@ -333,6 +345,6 @@ bool convertTokens(char buffer[], istream &inf)
     }
 
     buffer[i] = '\0';
-    cerr << "buffer: " << buffer << endl;
+    //cerr << "buffer: " << buffer << endl;
     return true;
 }

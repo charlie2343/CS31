@@ -61,3 +61,8 @@ Wow. | (lineLength =20) |## testing tabs and newline
 
 test case: 
 12345 123456 12345 ## 18
+hi. today
+9 
+should be 
+hi. 
+today 
