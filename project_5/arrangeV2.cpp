@@ -140,7 +140,8 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     bool paragraphFound = false;
     bool nextIsParagraph = false; 
     bool overflow = false;
-    int spacing = 0; 
+    int spacing = 0;
+    bool firstRun = false;
     // bool firstRun = true;
 
     // if (!convertTokens(prevPortion, inf))
@@ -182,6 +183,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             {
                 paragraphFound = true;
             }
+            firstRun = true; 
             charsPrinted = strlen(prevPortion);
         }
 
@@ -194,7 +196,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             //! check this I dont think this logic is right
 
             // edge case if <P> is only input, output is null 
-            if (strcmp(prevPortion, "<P>") == 0 && charsPrinted == 0)
+            if (strcmp(prevPortion, "<P>") == 0 && charsPrinted == 3)
             {
                 break;
             }
@@ -284,9 +286,13 @@ int arrange(int lineLength, istream &inf, ostream &outf)
         // add 2 spaces or one space from puntuation 
         //! EOL dont add any spaces
        // else if (strcmp(prevPortion, "<P>") != 0)
-       else
+        else
         {
             charsPrinted += prevlen + spacing;
+            if(firstRun){ 
+                charsPrinted -= prevlen;
+                firstRun = false; 
+            }
             cerr << "Prev Portion: " << prevPortion << endl; 
             cerr << "charsPrinted: " << charsPrinted << endl;
             outf << prevPortion;

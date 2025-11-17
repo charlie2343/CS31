@@ -280,3 +280,23 @@ solve
 confusion: 
 if ever hit <P> set flag, if next is P and flag just continue
 ** however we do not save word before <P> sequence 
+
+--
+1st loop ())(()())
+prev portin = This
+charsPrinted = 4
+portion = is
+prev len = 4
+spacing = 1
+if(4 + 2 + 1 > 7)
+charsprinted = 9 
+chartsprinted = 5
+firsrun = false
+outf << "This" 
+outf << " " 
+prevPortion = is
+portion = a 
+prevlen = 2 
+2 + 5  + 1 > 7 
+outf << prevPortion + newline
+charsprint = 0 
