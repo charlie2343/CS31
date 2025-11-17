@@ -54,3 +54,20 @@ much work; to accumulate work has almost become
 
 a passion with me: my study is so full of it now, that there is hardly
 an inch of room for any more.
+
+____________________________________________________________
+<P> asdf ## fist poriton is <P> 
+
+output: 
+<P> 
+
+asdf
+
+2. 
+  asdf <P> hi(linelength = 6)
+
+  expected: 
+  asdf
+
+
+  hi

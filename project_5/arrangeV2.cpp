@@ -107,7 +107,7 @@ void handleOverflow(char portion[], int lineLength, int &charsPrinted, ostream &
 {
     int j = strlen(portion);
     char temp[125];
-    //cerr << "length: " <<j << endl;  
+    // cerr << "length: " <<j << endl;
     while (j > lineLength)
     {
         strncpy(temp, portion, lineLength);
@@ -118,11 +118,11 @@ void handleOverflow(char portion[], int lineLength, int &charsPrinted, ostream &
         int remain = j - lineLength;
         memmove(portion, portion + lineLength, remain);
         portion[remain] = '\0';
-        //cerr << "new cut portion: " <<portion << endl; 
+        // cerr << "new cut portion: " <<portion << endl;
         overflow = true;
         charsPrinted = remain; // update length
 
-        //update j 
+        // update j
         j = strlen(portion);
     }
 }
@@ -168,22 +168,37 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     {
         if (strcmp(prevPortion, "") == 0)
         {
-            //cerr << "asdfasdf" << endl; 
+            // cerr << "asdfasdf" << endl;
             if (!convertTokens(prevPortion, inf))
             {
-                cerr << "fucked " << endl; 
+                cerr << "fucked " << endl;
                 return 0;
             }
+
+            //catch edge case if first portion is <P> 
+            if (strcmp(prevPortion, "<P>") == 0)
+            {
+                paragraphFound = true;
+            }
         }
-        
+
         handleOverflow(prevPortion, lineLength, charsPrinted, outf, overflow);
 
         if (!convertTokens(portion, inf))
         {
             // outf << "Final word: " << prevPortion;
-            if (paragraphFound)
+            //! check this I dont think this logic is right
+            // edge case if <P> is only input
+            if (strcmp(prevPortion, "<P>") == 0 && charsPrinted == 0)
+            {
                 break;
-            //! outf<< '\n';
+            }
+            //case if last poriton is <P> 
+            else if (strcmp(prevPortion, "<P>") == 0)
+            {
+                outf << '\n';
+                break;
+            }
             else
             {
                 outf << prevPortion << '\n';
@@ -191,31 +206,39 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             break;
         }
 
-        //Paragraph sequence logic
-        if(strcmp(portion, "<P>") == 0){ 
-            paragraphFound = true; 
+        // single Paragraph logic
+        if (strcmp(portion, "<P>") == 0)
+        {
+            paragraphFound = true;
         }
 
-        if(paragraphFound){
-            outf << prevPortion << "\n\n"; 
-            charsPrinted = 0; 
+        if (paragraphFound)
+        {
+            if (strcmp(prevPortion, "<P>") != 0)
+            {
+                outf << prevPortion; 
+            }
+            outf << "\n\n";
+            charsPrinted = 0;
             strcpy(prevPortion, portion);
-            paragraphFound = false; 
+            paragraphFound = false;
             continue;
         }
 
-        //CHeck EOL condition 
-        if(charsPrinted + strlen(portion) > lineLength){
+        // CHeck EOL condition
+        if (charsPrinted + strlen(portion) > lineLength)
+        {
             outf << prevPortion << '\n';
-            charsPrinted = 0; 
+            charsPrinted = 0;
             strcpy(prevPortion, portion);
-            continue; 
+            continue;
         }
 
-        //if normal word 
-        //add 2 spaces or one space from puntuation
-        //!EOL dont add any spaces
-        if(strcmp(prevPortion, "<P>") != 0){
+        // if normal word
+        // add 2 spaces or one space from puntuation
+        //! EOL dont add any spaces
+        if (strcmp(prevPortion, "<P>") != 0)
+        {
             int prevlen = 0;
             prevlen = strlen(prevPortion);
             if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
@@ -226,56 +249,56 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             else
             {
                 outf << prevPortion << " ";
-                charsPrinted+= 1 + prevlen; // gets the whitespace
+                charsPrinted += 1 + prevlen; // gets the whitespace
             }
-            //cerr << "Prev portion: " << prevPortion << " Chars printed: " << charsPrinted << endl;
+            // cerr << "Prev portion: " << prevPortion << " Chars printed: " << charsPrinted << endl;
         }
 
-        //update prevPortion
+        // update prevPortion
         strcpy(prevPortion, portion);
     }
-    if(overflow)
-        return 2; 
+    if (overflow)
+        return 2;
     return 0;
 }
 
-    bool convertTokens(char buffer[], istream &inf)
+bool convertTokens(char buffer[], istream &inf)
+{
+    char c;
+    int i = 0;
+
+    if (!inf)
+        return false;
+
+    // Skip spaces, newlines, tabs
+    while (inf.get(c) && (c == ' ' || c == '\n' || c == '\t'))
+        ;
+
+    // If we hit EOF while skipping whitespace
+    if (!inf)
+        return false;
+
+    buffer[i++] = c;
+
+    // If the word portion is just "-"
+    if (c == '-')
     {
-        char c;
-        int i = 0;
+        buffer[i] = '\0';
+        return true;
+    }
 
-        if (!inf)
-            return false;
-
-        // Skip spaces, newlines, tabs
-        while (inf.get(c) && (c == ' ' || c == '\n' || c == '\t'))
-            ;
-
-        // If we hit EOF while skipping whitespace
-        if (!inf)
-            return false;
-
+    // Read rest of portion until space/newline/tab OR a hyphen
+    while (inf.get(c) && c != ' ' && c != '\n' && c != '\t')
+    {
         buffer[i++] = c;
-
-        // If the word portion is just "-"
         if (c == '-')
         {
             buffer[i] = '\0';
             return true;
         }
-
-        // Read rest of portion until space/newline/tab OR a hyphen
-        while (inf.get(c) && c != ' ' && c != '\n' && c != '\t')
-        {
-            buffer[i++] = c;
-            if (c == '-')
-            {
-                buffer[i] = '\0';
-                return true;
-            }
-        }
-
-        buffer[i] = '\0';
-        cerr << "buffer: " << buffer << endl;
-        return true;
     }
+
+    buffer[i] = '\0';
+    cerr << "buffer: " << buffer << endl;
+    return true;
+}
