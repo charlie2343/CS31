@@ -179,3 +179,72 @@ paragraphfound = false
 edit: 
 paragraph found 
 
+
+____________________________________________________________
+//     //! set paragraph found 
+    //     if(strcmp(prevPortion, "<P>") == 0){
+    //         paragraphFound = true;
+    //         charCount += 4; // space + 3
+    //     }
+    //     cout << "paragraph Found: " << paragraphFound << endl;
+    //     if (strcmp(portion, "<P>") == 0 && paragraphFound)
+    //     {
+    //         continue; 
+    //         // cerr << "Paragraph found" << endl;
+    //         //outf << prevPortion;
+    //         outf << "\n\n";
+    //         charCount = 0;
+    //         paragraphFound = true;
+    //     }
+
+
+    //     //! process words
+    //     else if (strcmp(prevPortion, "<P>") != 0)
+    //     {
+    //         int len;
+    //         len = strlen(portion);
+    //         int prevlen;
+    //         prevlen = strlen(prevPortion);
+    //         // check for overflow:
+    //         // cerr << "charCount: " << charCount << " LEN: " << len << endl;
+    //         // cerr << charCount << ',' << lineLength << endl;
+    //         handleOverflow(prevPortion, lineLength, charCount, outf, overflow);
+    //         charCount += len; // i is index, leng
+    //         if (charCount > lineLength)
+    //         {
+    //             outf << prevPortion;
+    //             outf << '\n';
+    //             charCount = len;
+    //         }
+    //         //if paragraph found and word next output two newline
+    //         if(paragraphFound == true){
+    //             outf << "\n\n";
+    //         }
+    //         // cerr << "Last index of portion: " << i << " with val " << portion[i] << endl;
+    //         else if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
+    //         {
+    //             outf << prevPortion << "  ";
+    //             charCount += 2;
+    //         }
+    //         else
+    //         {
+    //             outf << prevPortion << " ";
+    //             charCount++; // gets the whitespace
+    //         }
+    //         paragraphFound = false;
+    //     }
+    //     strcpy(prevPortion, portion);
+    // }
+    // cerr << '\n';
+    // // cerr << "Total Chars Printed: " << charCount << endl;
+    ____________________________________________________________
+    prevportion= asd;flaskdjf
+    ()handleOverflow
+    j = 12
+    12 > 5 == true
+    temp = asd;f
+    outf << temp << \n
+    remain = 7 
+
+    ++++++
+    hi. my name? is charlie. .

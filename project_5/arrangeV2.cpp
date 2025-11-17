@@ -7,8 +7,6 @@
 
 using namespace std;
 
-// #include <afxstr.h>
-
 using namespace std;
 int arrange(int lineLength, istream &inf, ostream &outf);
 bool convertTokens(char buffer[], istream &inf);
@@ -55,9 +53,9 @@ int main()
         cerr << "Error: Cannot create results.txt!" << endl;
         // ... return with failure ...
     }
-    // cerr << "Enter maximum line length: ";
-    // int len;
-    // cin >> len;
+    cerr << "Enter maximum line length: ";
+    int len;
+    cin >> len;
     // cin.ignore(10000, '\n');
     // int returnCode = arrange(len, infile, outfile);
     // cerr << "Return code is " << returnCode << endl;
@@ -71,8 +69,8 @@ int main()
     // //         clearCstring(word, 50);
     // // }
     // // cerr << "EOF"<< endl;
-
-    arrange(20, infile, outfile);
+    int j = arrange(len, infile, outfile);
+    cerr << "Arrange return value: " << j << endl;
     // testArrange(7, "This\n\t\tis a\ntest\n", "This is\na test\n", 0);
     // testArrange(3, "s-----. ", "s-\n- -\n- -\n.\n", 0);
     // testArrange(10, ". . .", ".  .  .\n", 0);
@@ -105,11 +103,11 @@ void substring(char source[], char dest[], int start, int end)
     dest[i - start] = '\0';
 }
 
-void handleOverflow(char portion[], int lineLength, int &charCount, ostream &outf, bool &overflow)
+void handleOverflow(char portion[], int lineLength, int &charsPrinted, ostream &outf, bool &overflow)
 {
     int j = strlen(portion);
     char temp[125];
-
+    //cerr << "length: " <<j << endl;  
     while (j > lineLength)
     {
         strncpy(temp, portion, lineLength);
@@ -120,10 +118,12 @@ void handleOverflow(char portion[], int lineLength, int &charCount, ostream &out
         int remain = j - lineLength;
         memmove(portion, portion + lineLength, remain);
         portion[remain] = '\0';
-
-        j = remain; // update length
+        //cerr << "new cut portion: " <<portion << endl; 
         overflow = true;
-        charCount = j; // leftover counts toward next line
+        charsPrinted = remain; // update length
+
+        //update j 
+        j = strlen(portion);
     }
 }
 //!
@@ -133,147 +133,149 @@ int arrange(int lineLength, istream &inf, ostream &outf)
         return 1;
     char c;
     char portion[125];
-    int charCount = 0;
-    char prevPortion[125];
+    int charsPrinted = 0;
+    char prevPortion[125] = "";
     char temp[125];
     int i;
     bool paragraphFound = false;
     bool overflow = false;
     // bool firstRun = true;
-    if (!convertTokens(prevPortion, inf))
-    {
-        return 0;
-    }
-    int j = strlen(prevPortion);
-    char lastChar = prevPortion[j - 1];
-    if (lastChar == '.' || lastChar == '?' || lastChar == ':')
-    {
-        // prevPortion[j + 1] = ' ';
-        // prevPortion[j] = ' ';
-        // prevPortion[j + 2] = '\0';
-        charCount += 2;
-    }
-    else
-    {
-        charCount++;
-        // prevPortion[j + 1] = '\0';
-        // prevPortion[j] = ' ';
-    }
-    //
-    // cerr << "Modified first poriton: " << prevPortion << "....." <<endl;
-    //!! enter loop
-    charCount += strlen(prevPortion);
+
+    // if (!convertTokens(prevPortion, inf))
+    // {
+    //     return 0;
+    // }
+    // int j = strlen(prevPortion);
+    // char lastChar = prevPortion[j - 1];
+    // if (lastChar == '.' || lastChar == '?' || lastChar == ':')
+    // {
+    //     // prevPortion[j + 1] = ' ';
+    //     // prevPortion[j] = ' ';
+    //     // prevPortion[j + 2] = '\0';
+    //     charsPrinted += 2;
+    // }
+    // else
+    // {
+    //     charsPrinted++;
+    //     // prevPortion[j + 1] = '\0';
+    //     // prevPortion[j] = ' ';
+    // }
+    // //
+    // // cerr << "Modified first poriton: " << prevPortion << "....." <<endl;
+    // //!! enter loop
+    // charsPrinted += strlen(prevPortion);
     for (;;)
     {
+        if (strcmp(prevPortion, "") == 0)
+        {
+            //cerr << "asdfasdf" << endl; 
+            if (!convertTokens(prevPortion, inf))
+            {
+                cerr << "fucked " << endl; 
+                return 0;
+            }
+        }
+        
+        handleOverflow(prevPortion, lineLength, charsPrinted, outf, overflow);
 
         if (!convertTokens(portion, inf))
         {
             // outf << "Final word: " << prevPortion;
-            handleOverflow(prevPortion, lineLength, charCount, outf, overflow);
-            if(paragraphFound)
-                break; 
-                //! outf<< '\n';
+            if (paragraphFound)
+                break;
+            //! outf<< '\n';
             else
             {
                 outf << prevPortion << '\n';
             }
             break;
         }
-        //! set paragraph found 
-        if(strcmp(prevPortion, "<P>") == 0){
-            paragraphFound = true;
-            charCount += 4; // space + 3
+
+        //Paragraph sequence logic
+        if(strcmp(portion, "<P>") == 0){ 
+            paragraphFound = true; 
         }
-        cout << "paragraph Found: " << paragraphFound << endl;
-        if (strcmp(portion, "<P>") == 0 && paragraphFound)
-        {
+
+        if(paragraphFound){
+            outf << prevPortion << "\n\n"; 
+            charsPrinted = 0; 
+            strcpy(prevPortion, portion);
+            paragraphFound = false; 
+            continue;
+        }
+
+        //CHeck EOL condition 
+        if(charsPrinted + strlen(portion) > lineLength){
+            outf << prevPortion << '\n';
+            charsPrinted = 0; 
+            strcpy(prevPortion, portion);
             continue; 
-            // cerr << "Paragraph found" << endl;
-            //outf << prevPortion;
-            outf << "\n\n";
-            charCount = 0;
-            paragraphFound = true;
         }
 
-
-        //! process words
-        else if (strcmp(prevPortion, "<P>") != 0)
-        {
-            int len;
-            len = strlen(portion);
-            int prevlen;
+        //if normal word 
+        //add 2 spaces or one space from puntuation
+        //!EOL dont add any spaces
+        if(strcmp(prevPortion, "<P>") != 0){
+            int prevlen = 0;
             prevlen = strlen(prevPortion);
-            // check for overflow:
-            // cerr << "charCount: " << charCount << " LEN: " << len << endl;
-            // cerr << charCount << ',' << lineLength << endl;
-            handleOverflow(prevPortion, lineLength, charCount, outf, overflow);
-            charCount += len; // i is index, leng
-            if (charCount > lineLength)
-            {
-                outf << prevPortion;
-                outf << '\n';
-                charCount = len;
-            }
-            //if paragraph found and word next output two newline
-            if(paragraphFound == true){
-                outf << "\n\n";
-            }
-            // cerr << "Last index of portion: " << i << " with val " << portion[i] << endl;
-            else if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
+            if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
             {
                 outf << prevPortion << "  ";
-                charCount += 2;
+                charsPrinted += 2 + prevlen;
             }
             else
             {
                 outf << prevPortion << " ";
-                charCount++; // gets the whitespace
+                charsPrinted+= 1 + prevlen; // gets the whitespace
             }
-            paragraphFound = false;
+            //cerr << "Prev portion: " << prevPortion << " Chars printed: " << charsPrinted << endl;
         }
+
+        //update prevPortion
         strcpy(prevPortion, portion);
     }
-    cerr << '\n';
-    // cerr << "Total Chars Printed: " << charCount << endl;
-    if (overflow)
-        return 2;
+    if(overflow)
+        return 2; 
     return 0;
 }
 
-bool convertTokens(char buffer[], istream& inf)
-{
-    char c;
-    int i = 0;
-
-    if (!inf)
-        return false;
-
-    // Skip spaces, newlines, tabs
-    while (inf.get(c) && (c == ' ' || c == '\n' || c == '\t'))
-        ;
-
-    // If we hit EOF while skipping whitespace
-    if (!inf)
-        return false;
-
-    buffer[i++] = c;
-
-    // If the word portion is just "-"
-    if (c == '-') {
-        buffer[i] = '\0';
-        return true;
-    }
-
-    // Read rest of portion until space/newline/tab OR a hyphen
-    while (inf.get(c) && c != ' ' && c != '\n' && c != '\t')
+    bool convertTokens(char buffer[], istream &inf)
     {
+        char c;
+        int i = 0;
+
+        if (!inf)
+            return false;
+
+        // Skip spaces, newlines, tabs
+        while (inf.get(c) && (c == ' ' || c == '\n' || c == '\t'))
+            ;
+
+        // If we hit EOF while skipping whitespace
+        if (!inf)
+            return false;
+
         buffer[i++] = c;
-        if (c == '-') {
+
+        // If the word portion is just "-"
+        if (c == '-')
+        {
             buffer[i] = '\0';
             return true;
         }
-    }
 
-    buffer[i] = '\0';
-    return true;
-}
+        // Read rest of portion until space/newline/tab OR a hyphen
+        while (inf.get(c) && c != ' ' && c != '\n' && c != '\t')
+        {
+            buffer[i++] = c;
+            if (c == '-')
+            {
+                buffer[i] = '\0';
+                return true;
+            }
+        }
+
+        buffer[i] = '\0';
+        cerr << "buffer: " << buffer << endl;
+        return true;
+    }
