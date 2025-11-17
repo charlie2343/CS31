@@ -138,6 +138,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     char temp[125];
     int i;
     bool paragraphFound = false;
+    bool nextIsParagraph = false; 
     bool overflow = false;
     // bool firstRun = true;
 
@@ -166,12 +167,12 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     // charsPrinted += strlen(prevPortion);
     for (;;)
     {
+        //if prevPortion buffer not loaded (first iteration)
         if (strcmp(prevPortion, "") == 0)
         {
             // cerr << "asdfasdf" << endl;
             if (!convertTokens(prevPortion, inf))
             {
-                cerr << "fucked " << endl;
                 return 0;
             }
 
@@ -184,16 +185,18 @@ int arrange(int lineLength, istream &inf, ostream &outf)
 
         handleOverflow(prevPortion, lineLength, charsPrinted, outf, overflow);
 
+        //EOF detection
         if (!convertTokens(portion, inf))
         {
             // outf << "Final word: " << prevPortion;
             //! check this I dont think this logic is right
-            // edge case if <P> is only input
+
+            // edge case if <P> is only input, output is null 
             if (strcmp(prevPortion, "<P>") == 0 && charsPrinted == 0)
             {
                 break;
             }
-            //case if last poriton is <P> 
+            //case if last poriton is <P>, dont write it out
             else if (strcmp(prevPortion, "<P>") == 0)
             {
                 outf << '\n';
@@ -206,18 +209,43 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             break;
         }
 
-        // single Paragraph logic
-        if (strcmp(portion, "<P>") == 0)
-        {
-            paragraphFound = true;
+        // // single Paragraph logic
+        // if (strcmp(portion, "<P>") == 0)
+        // {
+        //     paragraphFound = true;
+        // }
+
+        // if (paragraphFound)
+        // {
+        //     if (strcmp(prevPortion, "<P>") != 0)
+        //     {
+        //         outf << prevPortion; 
+        //     }
+        //     outf << "\n\n";
+        //     charsPrinted = 0;
+        //     strcpy(prevPortion, portion);
+        //     paragraphFound = false;
+        //     continue;
+        // }
+
+        //! trying to get consecutive paragraph case. 
+        paragraphFound = (strcmp(prevPortion, "<P>") == 0); 
+        nextIsParagraph = (strcmp(portion, "<P>") == 0);
+
+        if(paragraphFound && nextIsParagraph){ 
+            strcpy(prevPortion, portion);
+            continue;
         }
 
+        //dont have to do (paragraphFound and !nextIsParagraph) bc nextisParagraph is only changing one and is checked above
         if (paragraphFound)
         {
+            //if only one <P> in sequence (prev is valid word)
             if (strcmp(prevPortion, "<P>") != 0)
             {
                 outf << prevPortion; 
             }
+            //otherwise output two newline
             outf << "\n\n";
             charsPrinted = 0;
             strcpy(prevPortion, portion);
@@ -232,12 +260,15 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             charsPrinted = 0;
             strcpy(prevPortion, portion);
             continue;
+        } // if next is <P> just output it., this allows sequence to reassign prevPortion, and just do two newline, not worrying about word it had to write before sequence. 
+        else if(nextIsParagraph){
+            outf << prevPortion; 
         }
-
-        // if normal word
-        // add 2 spaces or one space from puntuation
+        // otherwise if normal word
+        // add 2 spaces or one space from puntuation 
         //! EOL dont add any spaces
-        if (strcmp(prevPortion, "<P>") != 0)
+       // else if (strcmp(prevPortion, "<P>") != 0)
+       else
         {
             int prevlen = 0;
             prevlen = strlen(prevPortion);

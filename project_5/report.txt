@@ -1,5 +1,7 @@
-a. One obstacle I overcame was not printing spaces if the word would be the last portion on the line. To solve this I restructered my code to store both the current poriton and the next portion. By having both portions I could check if a word was the last on the line, and not add the spaces. 
-It was also difficult to properly get my word processing function getPortion() to work in a way that only got valid words. I initially used infile.getline() however this made indexing a pain as I would have to reindex to store each word in a buffer, and I had to realize to clear my getline to continue reading the line if it exceed maxLength. 
+a. 
+One of the biggest obstacles was handling the case of consecutive paragraphs. I started by setting a flag to true if the next portion is a <P>. I did this because I wanted to bypass my space/punctuation writing code if so. However this did not work when I came to implement the functionality where multiple <P>s strung together act as one <P>. To solve this, I set a flag true based on the current portion, and stepped out of the loop (continue) if the next is a portion. When finally the next is not a portion, It then enters two newlines. However, I realized my punctuation would now happen when I didn’t want it to because the punctuation code would not be in the branch (implicitly, ie passed some earlier check) when the next is not a <P>. Finally, by explicitly adding a statement to skip punctuation if next is <P>, I was able to properly detect a sequence of <P>s and also skip adding spaces if the next portion is a <P>. 
+
+
 
 b. Pseudo code for project: 
 convertTokens(){ 
@@ -37,25 +39,21 @@ handleOverflow(){
     save rest of portion to argument passed
 }
 
-c.
-test cases: 
-s-----.
-result: 
-s-
-- -
-- -
-.
+c.test cases: 
+1.  Input: s-----  | (linelength = 3) | ##testing hypen splitting
+2. Input: <P> asdf |(linelength = 20) |  ## fist portion is <P> 
+3. Input: asdf <P> hi | (linelength = 20) |  ## testing normal paragraph
+4. Input: asdf <P> <P> <P> hi | (lineLength =20) |## testing sequence paragraph
+5. Input: 
+Let's
+    check    what
+ happens.  <P>
 
-
-if portion is <P> and prev is not paragraph
-    wrtie two newline
-
-want: 
-now paragraph trigger if next poriton is EOF
-
-if portion is <P> and prev is not paragraph then output lines
-
-
-example: 
-hi <P> 
-
+Wow. | (lineLength =20) |## testing tabs and newline
+6. Input: 12345 <P> | (linelength = 7 ) | ## testing not treating <P> as portion
+6. Input: <P> | (linelength =  10) | ## testing edge case of only <P> 
+6. Input: asdfasdf| (linelength =  -4) | ## testing return value 1 
+6. Input: | (linelength =  ) | ## testing
+6. Input: | (linelength =  ) | ## testing
+6. Input: | (linelength =  ) | ## testing
+6. Input: | (linelength =  ) | ## testing

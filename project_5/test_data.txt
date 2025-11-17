@@ -11,13 +11,6 @@ a passion with me: my study is so full of it now, that there is hardly
 an inch of room for any more.
 
 
-Let's
-    check    what
- happens.  <P>
-
-Wow.
-
-
 asdfa. bnmb lkjj sva;kljdvlaks. asdf as s
 This is useful for Project 5 if you choose to process
 the input character by character. Some people will use an approach that reads one line at a time into a C string:
@@ -56,7 +49,7 @@ a passion with me: my study is so full of it now, that there is hardly
 an inch of room for any more.
 
 ____________________________________________________________
-<P> asdf ## fist poriton is <P> 
+<P> asdf ## fist portion is <P> 
 
 output: 
 <P> 
@@ -69,5 +62,11 @@ asdf
   expected: 
   asdf
 
-
   hi
+
+3. 
+Let's
+    check    what
+ happens.  <P>
+
+Wow.

@@ -248,3 +248,19 @@ ____________________________________________________________
 
     ++++++
     hi. my name? is charlie. .
+PSEUDO CODE REASONING
+set paragraphFound to true is prev is <P> 
+if portion and pFound continue
+
+____________________________________________________________
+trace: 
+prevPoriton = CS31 
+portion = <P> 
+paragraphFound = false
+nextIsParagraph = true; 
+14< 20
+
+
+confusion: 
+if ever hit <P> set flag, if next is P and flag just continue
+** however we do not save word before <P> sequence 
