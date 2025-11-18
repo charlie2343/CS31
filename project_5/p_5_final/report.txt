@@ -46,10 +46,10 @@ c.test cases:
 3. Input: asdf <P> hi | (linelength = 20) |  ## testing normal paragraph
 4. Input: asdf <P> <P> <P> hi | (lineLength =20) |## testing sequence paragraph
 5. Input: 
-Let's
-    check    what
- happens.  <P>
-Wow. | (lineLength =20) |## testing tabs and newline
+    Let's
+        check    what
+    happens.  <P>
+    Wow. | (lineLength =20) |## testing tabs and newline
 6. Input: 12345 <P> 1234| (linelength = 7 ) | ## testing not treating <P> as portion
 6. Input: <P> | (linelength =  10) | ## testing edge case of only <P> 
 6. Input: asdfasdf| (linelength =  -4) | ## testing return value 1 
@@ -57,7 +57,6 @@ Wow. | (lineLength =20) |## testing tabs and newline
 6. Input: Hello. world test | (linelength = 13) | ## testing punctuation 
 6. Input: abcd| (linelength =  3) | ## testing word portion overflow
 6. Input: Hello world <P>| (linelength =  20) | ## testing <P> at EOF
-
 
 test case: 
 12345 123456 12345 ## 18

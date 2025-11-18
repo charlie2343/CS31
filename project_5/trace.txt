@@ -297,6 +297,32 @@ outf << " "
 prevPortion = is
 portion = a 
 prevlen = 2 
-2 + 5  + 1 > 7 
+ + 5  + 1 > 7 
 outf << prevPortion + newline
 charsprint = 0 
+
+
+1st loop ())(()())
+prev portin = This
+charsPrinted = 4
+portion = is
+prev len = 4
+spacing = 1
+charsprinted += 2
+if(6 + 1 > 7)
+charsprinted = 11
+chartsprinted = 7
+firsrun = false
+outf << "This" 
+outf << " " 
+prevPortion = is
+portion = a 
+prevlen = 2
+7  + 1 > 7 
+outf << prevPortion + newline
+charsprint = 0 
+
+
+overflow <P> 
+two newline @ <P>
+
