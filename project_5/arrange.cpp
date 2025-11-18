@@ -125,7 +125,7 @@ void handleOverflow(char portion[], int lineLength, int &charsPrinted, ostream &
         // update j
         j = strlen(portion);
     }
-    //cerr<< "Overflow" << endl; 
+    // cerr<< "Overflow" << endl;
 }
 //!
 int arrange(int lineLength, istream &inf, ostream &outf)
@@ -139,7 +139,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     char temp[125];
     int i;
     bool paragraphFound = false;
-    bool nextIsParagraph = false; 
+    bool nextIsParagraph = false;
     bool overflow = false;
     int spacing = 0;
     bool firstRun = false;
@@ -170,7 +170,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
     // charsPrinted += strlen(prevPortion);
     for (;;)
     {
-        //if prevPortion buffer not loaded (first iteration)
+        // if prevPortion buffer not loaded (first iteration)
         if (strcmp(prevPortion, "") == 0)
         {
             // cerr << "asdfasdf" << endl;
@@ -179,32 +179,27 @@ int arrange(int lineLength, istream &inf, ostream &outf)
                 return 0;
             }
 
-            //catch edge case if first portion is <P> 
+            // catch edge case if first portion is <P>
             if (strcmp(prevPortion, "<P>") == 0)
             {
                 paragraphFound = true;
             }
-            firstRun = true; 
-            charsPrinted = strlen(prevPortion);
         }
 
-        if(strcmp(prevPortion, "<P>") != 0){
-        handleOverflow(prevPortion, lineLength, charsPrinted, outf, overflow);
-        }
 
-        cerr << "prev portion: " << prevPortion << endl; 
-        //EOF detection
+        // cerr << "prev portion: " << prevPortion << endl;
+        // EOF detection
         if (!convertTokens(portion, inf))
         {
             // outf << "Final word: " << prevPortion;
             //! check this I dont think this logic is right
 
-            // edge case if <P> is only input, output is null 
+            // edge case if <P> is only input, output is null
             if (strcmp(prevPortion, "<P>") == 0 && charsPrinted == 3)
             {
                 break;
             }
-            //case if last poriton is <P>, dont write it out
+            // case if last poriton is <P>, dont write it out
             else if (strcmp(prevPortion, "<P>") == 0)
             {
                 outf << '\n';
@@ -227,7 +222,7 @@ int arrange(int lineLength, istream &inf, ostream &outf)
         // {
         //     if (strcmp(prevPortion, "<P>") != 0)
         //     {
-        //         outf << prevPortion; 
+        //         outf << prevPortion;
         //     }
         //     outf << "\n\n";
         //     charsPrinted = 0;
@@ -236,24 +231,25 @@ int arrange(int lineLength, istream &inf, ostream &outf)
         //     continue;
         // }
 
-        //! trying to get consecutive paragraph case. 
-        paragraphFound = (strcmp(prevPortion, "<P>") == 0); 
+        //! trying to get consecutive paragraph case.
+        paragraphFound = (strcmp(prevPortion, "<P>") == 0);
         nextIsParagraph = (strcmp(portion, "<P>") == 0);
 
-        if(paragraphFound && nextIsParagraph){ 
+        if (paragraphFound && nextIsParagraph)
+        {
             strcpy(prevPortion, portion);
             continue;
         }
 
-        //dont have to do (paragraphFound and !nextIsParagraph) bc nextisParagraph is only changing one and is checked above
+        // dont have to do (paragraphFound and !nextIsParagraph) bc nextisParagraph is only changing one and is checked above
         if (paragraphFound)
         {
-            //if only one <P> in sequence (prev is valid word)
+            // if only one <P> in sequence (prev is valid word)
             if (strcmp(prevPortion, "<P>") != 0)
             {
-                outf << prevPortion; 
+                outf << prevPortion;
             }
-            //otherwise output two newline
+            // otherwise output two newline
             outf << "\n\n";
             charsPrinted = 0;
             strcpy(prevPortion, portion);
@@ -261,55 +257,70 @@ int arrange(int lineLength, istream &inf, ostream &outf)
             continue;
         }
 
-        
-        //! error does not account for puntuated spacing properly 
+        //! error does not account for puntuated spacing properly
         int prevlen = 0;
         prevlen = strlen(prevPortion);
         if (prevPortion[prevlen - 1] == '.' || prevPortion[prevlen - 1] == '?' || prevPortion[prevlen - 1] == ':')
         {
-            spacing = 2; 
+            spacing = 2;
         }
         else
         {
             spacing = 1;
-            
         }
-// CHeck EOL condition
-        if(!nextIsParagraph)
-            charsPrinted += strlen(portion);
-        if (charsPrinted + spacing > lineLength)
+        // CHeck EOL condition
+        if (charsPrinted + spacing + strlen(prevPortion) > lineLength)
         {
-           // cerr << "Portion: " 
-            outf << prevPortion << '\n';
+            // cerr << "Portion: "
+            outf  << '\n';
+            outf << prevPortion;
             charsPrinted = 0;
             strcpy(prevPortion, portion);
             continue;
-        } // if next is <P> just output it., this allows sequence to reassign prevPortion, and just do two newline, not worrying about word it had to write before sequence. 
-        else if(nextIsParagraph){
-            outf << prevPortion; 
+        } // if next is <P> just output it., this allows sequence to reassign prevPortion, and just do two newline, not worrying about word it had to write before sequence.
+        else if (nextIsParagraph)
+        {
+            if (spacing == 2)
+                {
+                    outf << "  ";
+                }
+                else if (spacing == 1)
+                {
+                    outf << " ";
+                }
+            outf << prevPortion;
         }
         // otherwise if normal word
-        // add 2 spaces or one space from puntuation 
+        // add 2 spaces or one space from puntuation
         //! EOL dont add any spaces
-       // else if (strcmp(prevPortion, "<P>") != 0)
+        // else if (strcmp(prevPortion, "<P>") != 0)
         else
         {
-            charsPrinted += prevlen + spacing;
-            if(firstRun){ 
-                charsPrinted -= prevlen;
-                firstRun = false; 
+            if (charsPrinted == 0)
+            {
+                outf << prevPortion;
             }
+            else
+            {
+                if (spacing == 2)
+                {
+                    outf << "  ";
+                }
+                else if (spacing == 1)
+                {
+                    outf << " ";
+                }
+                outf << prevPortion;
+            }
+            charsPrinted += prevlen + spacing;
             cerr << "Prev Portion: " << prevPortion << endl; 
             cerr << "charsPrinted: " << charsPrinted << endl;
-            outf << prevPortion;
-            if (spacing == 2)
-            {
-                outf << "  ";
-            }
-            else if(spacing == 1){ 
-                outf << " ";
-            }
+
             // cerr << "Prev portion: " << prevPortion << " Chars printed: " << charsPrinted << endl;
+        }
+         if (strcmp(prevPortion, "<P>") != 0)
+        {
+            handleOverflow(prevPortion, lineLength, charsPrinted, outf, overflow);
         }
 
         // update prevPortion
@@ -357,6 +368,6 @@ bool convertTokens(char buffer[], istream &inf)
     }
 
     buffer[i] = '\0';
-    //cerr << "buffer: " << buffer << endl;
+    // cerr << "buffer: " << buffer << endl;
     return true;
 }
