@@ -119,6 +119,7 @@ private:
 
     // Helper functions
     void checkPos(int r, int c, string functionName) const;
+    void deallocate(Zombie *m_zombies[], int i);
     bool isPosInBounds(int r, int c) const;
 };
 
@@ -443,8 +444,7 @@ Arena::~Arena()
     m_player = nullptr;
     for (int i = 0; i < m_nZombies; i++)
     {
-        delete m_zombies[i];
-        m_zombies[i] = nullptr;
+        deallocate(m_zombies, i);
     }
     cerr << "Leaving Arena destructor" << endl;
 }
@@ -646,10 +646,21 @@ void Arena::moveZombies()
         }
         if (m_zombies[i]->isDead())
         {
-            delete m_zombies[i];
-            //m_zombies[i] = nullptr;
+            deallocate(m_zombies, i);
+            // m_zombies[i] = nullptr;
         }
     }
+}
+
+void Arena::deallocate(Zombie *m_zombies[], int i)
+{
+    delete m_zombies[i];
+    for (int j = i; j < m_nZombies - 1; j++)
+    {
+        m_zombies[j] = m_zombies[j + 1];
+    }
+    m_zombies[m_nZombies - 1] = nullptr;
+    m_nZombies--;
 }
 
 bool Arena::isPosInBounds(int r, int c) const
@@ -754,22 +765,24 @@ string Game::takePlayerTurn()
     }
 }
 
-string translateDir(int dir){ 
-    switch(dir){ 
-        case 0:
-            return "NORTH";
-            break; 
-        case 1:
-            return "EAST";
-            break; 
-        case 2:
-            return "SOUTH";
-            break;
-        case 3:
-            return "WEST";
-            break;
-        }
-        return "I HATE CS"; 
+string translateDir(int dir)
+{
+    switch (dir)
+    {
+    case 0:
+        return "NORTH";
+        break;
+    case 1:
+        return "EAST";
+        break;
+    case 2:
+        return "SOUTH";
+        break;
+    case 3:
+        return "WEST";
+        break;
+    }
+    return "I HATE CS";
 }
 
 void Game::play()
@@ -786,10 +799,13 @@ void Game::play()
             m_arena->moveZombies();
         m_arena->display(msg);
         int bestDir = 0;
-        if(recommendMove(*m_arena, player->row(), player->col(), bestDir)){ 
-        cout << "Best dir: " << translateDir(bestDir) << endl; 
-        } else{
-            cout << "Recommended to drop brain" << endl; 
+        if (recommendMove(*m_arena, player->row(), player->col(), bestDir))
+        {
+            cout << "Best dir: " << translateDir(bestDir) << endl;
+        }
+        else
+        {
+            cout << "Recommended to drop brain" << endl;
         }
         cout << m_turns << " turns have been taken." << endl;
     }
@@ -851,7 +867,7 @@ bool attemptMove(const Arena &a, int dir, int &r, int &c)
     }
     if (dir == NORTH)
     {
-        if (r  <= 1)
+        if (r <= 1)
         {
             return false;
         }
@@ -910,15 +926,15 @@ bool recommendMove(const Arena &a, int r, int c, int &bestDir)
                 hazardGrid[i - 1][j - 1] = 1;
                 for (int dir = 0; dir <= 3; dir++)
                 {
-                    int temp_i = i; 
-                    int temp_j = j; 
+                    int temp_i = i;
+                    int temp_j = j;
                     // loop thorugh dir
                     if (attemptMove(a, dir, i, j))
                     {
                         hazardGrid[i - 1][j - 1] = 1;
                     }
                     i = temp_i;
-                    j = temp_j; 
+                    j = temp_j;
                 }
             }
         }
@@ -932,28 +948,31 @@ bool recommendMove(const Arena &a, int r, int c, int &bestDir)
     }
     cout << endl;
 
-
-    //if staying put is dangerous
-    if(hazardGrid[r-1][c-1] == 1){ 
-    for (int dir = 0; dir <= 3; dir++)
+    // if staying put is dangerous
+    if (hazardGrid[r - 1][c - 1] == 1)
+    {
+        for (int dir = 0; dir <= 3; dir++)
         {
-            int temp_r = r; 
-            int temp_c = c; 
+            int temp_r = r;
+            int temp_c = c;
             // loop thorugh dir
             if (attemptMove(a, dir, r, c))
             {
-                if(hazardGrid[r - 1][c - 1] == 1){
-                    ; 
-                }else{
+                if (hazardGrid[r - 1][c - 1] == 1)
+                {
+                    ;
+                }
+                else
+                {
                     bestDir = dir;
                     return true;
                 }
             }
             r = temp_r;
-            c = temp_c; 
+            c = temp_c;
         }
     }
-    //staying put is safe-> drop poison brain
+    // staying put is safe-> drop poison brain
     return false;
 
     // Your replacement implementation should do something intelligent.
