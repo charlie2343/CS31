@@ -61,7 +61,7 @@ private:
     int m_col;
     bool m_dead;
     bool m_poisoned;
-    bool m_isStalled;
+    bool m_isStalled = true;
 };
 
 class Player
@@ -202,7 +202,8 @@ void Zombie::move()
     //   move, don't move.  If it lands on a poisoned brain, eat the
     //   brain and remove it from the game (so it is no longer on that
     //   grid point).
-    bool isPoison_thisMove;
+    bool isPoison_thisMove = false;
+
     if (m_poisoned)
     {
         if (m_isStalled)
@@ -210,77 +211,73 @@ void Zombie::move()
             m_isStalled = !m_isStalled;
             return;
         }
+        m_isStalled = !m_isStalled;
     }
-
-    //   This illustrates how you can select a random direction:
-    int dir = randInt(0, NUMDIRS - 1); // dir is now UP, DOWN, LEFT, or RIGHT
-
+    // cerr << " is poisoned: " << m_poisoned << " Zombie at row, col: " << m_row << ", " << m_col << endl;
+    //  cerr << "(IN Zombie::move()), zombies at: " << m_row << " row, " << m_col << " col " << " before move" << endl;
+    //     This illustrates how you can select a random direction:
+    //  int dir = randInt(0, NUMDIRS - 1); // dir is now UP, DOWN, LEFT, or RIGHT
+    int dir = 2;
     int maxRows = m_arena->rows();
     int maxCols = m_arena->cols();
     if (dir == NORTH)
     {
+        cerr << " dir is NORTH" << endl;
         if (m_row <= 1)
-            ;
+        {
+            return;
+            // cerr << " first row, cant move north" << endl;
+        }
         else if (m_arena->getCellStatus(m_row - 1, m_col) == HAS_POISON)
         {
             m_arena->setCellStatus(m_row - 1, m_col, EMPTY);
             isPoison_thisMove = true;
         }
-        else
-        {
-            m_row--;
-        }
+        m_row--;
     }
     if (dir == SOUTH)
     {
+        // cerr << " dir is South" << endl;
         if (m_row >= maxRows)
-            ;
+            return;
         else if (m_arena->getCellStatus(m_row + 1, m_col) == HAS_POISON)
         {
-            m_arena->setCellStatus(m_row - 1, m_col, EMPTY);
+            m_arena->setCellStatus(m_row + 1, m_col, EMPTY);
             isPoison_thisMove = true;
         }
-        else
-        {
-            m_row++;
-        }
+        m_row++;
     }
     if (dir == EAST)
     {
+        // cerr << " dir is east" << endl;
         if (m_col >= maxCols)
-            ;
+            return;
         else if (m_arena->getCellStatus(m_row, m_col + 1) == HAS_POISON)
         {
-            m_arena->setCellStatus(m_row - 1, m_col, EMPTY);
+            m_arena->setCellStatus(m_row, m_col + 1, EMPTY);
             isPoison_thisMove = true;
         }
-        else
-        {
-            m_col++;
-        }
+        m_col++;
     }
     if (dir == WEST)
     {
+        // cerr << " dir is west" << endl;
         if (m_col <= 1)
-            ;
+            return;
         else if (m_arena->getCellStatus(m_row, m_col - 1) == HAS_POISON)
         {
-            m_arena->setCellStatus(m_row - 1, m_col, EMPTY);
+            m_arena->setCellStatus(m_row, m_col - 1, EMPTY);
             isPoison_thisMove = true;
         }
-        else
-        {
-            m_col--;
-        }
+        m_col--;
     }
     if (m_poisoned && isPoison_thisMove)
     {
         m_dead = true;
     }
-    else
-    {
-        m_poisoned = isPoison_thisMove;
-    }
+    if (isPoison_thisMove)
+        m_poisoned = true;
+    //  cerr << "(IN Zombie::move()), zombies at: " << m_row << " row, " << m_col << " col " << " after move" << endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -639,6 +636,7 @@ void Arena::moveZombies()
 
     for (int i = 0; i < m_nZombies; i++)
     {
+
         m_zombies[i]->move();
         if (m_zombies[i]->row() == m_player->row() && m_zombies[i]->col() == m_player->col())
         {
@@ -912,7 +910,8 @@ bool recommendMove(const Arena &a, int r, int c, int &bestDir)
 {
     // TODO:  Implement this function
     // Delete the following line and replace it with your code.
-    int hazardGrid[a.rows()][a.cols()];
+
+    int hazardGrid[MAXROWS][MAXCOLS];
     for (int i = 1; i <= a.rows(); i++)
         for (int j = 1; j <= a.cols(); j++)
             hazardGrid[i - 1][j - 1] = 0;
@@ -995,6 +994,201 @@ bool recommendMove(const Arena &a, int r, int c, int &bestDir)
     // we're not asking you to do.
 }
 
+//////////
+#include <type_traits>
+#include <cstdlib>
+#include <cassert>
+
+#define CHECKTYPE(c, f, r, a)                                      \
+    static_assert(std::is_same<decltype(&c::f), r(c::*) a>::value, \
+                  "FAILED: You changed the type of " #c "::" #f);  \
+    {                                                              \
+        [[gnu::unused]] auto p = static_cast<r(c::*) a>(&c::f);    \
+    }
+
+void thisFunctionWillNeverBeCalled()
+{
+    // If the student deleted or changed the interfaces to the public
+    // functions, this won't compile.  (This uses magic beyond the scope
+    // of CS 31.)
+
+    Zombie z(static_cast<Arena *>(0), 1, 1);
+    CHECKTYPE(Zombie, row, int, () const);
+    CHECKTYPE(Zombie, col, int, () const);
+    CHECKTYPE(Zombie, isDead, bool, () const);
+    CHECKTYPE(Zombie, move, void, ());
+
+    Player p(static_cast<Arena *>(0), 1, 1);
+    CHECKTYPE(Player, row, int, () const);
+    CHECKTYPE(Player, col, int, () const);
+    CHECKTYPE(Player, isDead, bool, () const);
+    CHECKTYPE(Player, dropPoisonedBrain, string, ());
+    CHECKTYPE(Player, move, string, (int));
+    CHECKTYPE(Player, setDead, void, ());
+
+    Arena a(1, 1);
+    CHECKTYPE(Arena, rows, int, () const);
+    CHECKTYPE(Arena, cols, int, () const);
+    CHECKTYPE(Arena, player, Player *, () const);
+    CHECKTYPE(Arena, zombieCount, int, () const);
+    CHECKTYPE(Arena, getCellStatus, int, (int, int) const);
+    CHECKTYPE(Arena, numberOfZombiesAt, int, (int, int) const);
+    CHECKTYPE(Arena, display, void, (string) const);
+    CHECKTYPE(Arena, setCellStatus, void, (int, int, int));
+    CHECKTYPE(Arena, addZombie, bool, (int, int));
+    CHECKTYPE(Arena, addPlayer, bool, (int, int));
+    CHECKTYPE(Arena, moveZombies, void, ());
+
+    Game g(1, 1, 1);
+    CHECKTYPE(Game, play, void, ());
+}
+
+void findTheZombie(const Arena &a, int &r, int &c)
+{
+    if (a.numberOfZombiesAt(r - 1, c) == 1)
+        r--;
+    else if (a.numberOfZombiesAt(r + 1, c) == 1)
+        r++;
+    else if (a.numberOfZombiesAt(r, c - 1) == 1)
+        c--;
+    else if (a.numberOfZombiesAt(r, c + 1) == 1)
+        c++;
+    else
+        assert(false);
+}
+
+void surroundWithPoison(Arena &a, int r, int c)
+{
+    a.setCellStatus(r - 1, c, HAS_POISON);
+    a.setCellStatus(r + 1, c, HAS_POISON);
+    a.setCellStatus(r, c - 1, HAS_POISON);
+    a.setCellStatus(r, c + 1, HAS_POISON);
+}
+
+void doBasicTests()
+{
+    {
+        Arena a(10, 20);
+        assert(a.addPlayer(2, 5));
+        Player *pp = a.player();
+        assert(pp->row() == 2 && pp->col() == 5 && !pp->isDead());
+        assert(pp->move(NORTH) == "Player moved north.");
+        assert(pp->row() == 1 && pp->col() == 5 && !pp->isDead());
+        assert(pp->move(NORTH) == "Player couldn't move; player stands.");
+        assert(pp->row() == 1 && pp->col() == 5 && !pp->isDead());
+        pp->setDead();
+        assert(pp->row() == 1 && pp->col() == 5 && pp->isDead());
+    }
+    {
+        Arena a(10, 20);
+        int r = 8;
+        int c = 18;
+        assert(a.addPlayer(r, c));
+        for (int k = 0; k < MAXZOMBIES / 4; k++)
+        {
+            assert(a.addZombie(r - 1, c));
+            assert(a.addZombie(r + 1, c));
+            assert(a.addZombie(r, c - 1));
+            assert(a.addZombie(r, c + 1));
+        }
+        assert(!a.player()->isDead());
+        a.moveZombies();
+        assert(a.player()->isDead());
+    }
+    {
+        Arena a(10, 20);
+        int r = 4;
+        int c = 4;
+        assert(a.addZombie(r, c));
+        surroundWithPoison(a, r, c);
+        assert(a.addPlayer(8, 18));
+        cerr << " # zombies at 4,4 before move: " << a.numberOfZombiesAt(r, c) << endl;
+        assert(a.zombieCount() == 1 && a.numberOfZombiesAt(r, c) == 1);
+        // moves zombie to eat nearyby poison
+        a.moveZombies();
+        cerr << " # zombies at 4,4 after move: " << a.numberOfZombiesAt(r, c) << endl;
+        // checks if zombie is not at og space
+        assert(a.zombieCount() == 1 && a.numberOfZombiesAt(r, c) == 0);
+        // updates r,c to new zombie loc
+        findTheZombie(a, r, c);
+        // checks if cell is updated after zombie ate
+        assert(a.getCellStatus(r, c) != HAS_POISON);
+        a.moveZombies();
+        // tests for stall
+        cerr << " Zombie at row, col: " << r << ", " << c << " Should be stalled" << endl;
+        assert(a.zombieCount() == 1 && a.numberOfZombiesAt(r, c) == 1);
+        a.moveZombies();
+        assert(a.zombieCount() == 1 && a.numberOfZombiesAt(r, c) == 0);
+        findTheZombie(a, r, c);
+        a.moveZombies();
+        assert(a.zombieCount() == 1 && a.numberOfZombiesAt(r, c) == 1);
+        surroundWithPoison(a, r, c);
+        a.moveZombies();
+        assert(a.zombieCount() == 0 && a.numberOfZombiesAt(r, c) == 0);
+        assert(a.numberOfZombiesAt(r - 1, c) == 0);
+        assert(a.numberOfZombiesAt(r + 1, c) == 0);
+        assert(a.numberOfZombiesAt(r, c - 1) == 0);
+        assert(a.numberOfZombiesAt(r, c + 1) == 0);
+    }
+    {
+        Arena a(20, 20);
+        assert(a.addPlayer(1, 20));
+        struct Coord
+        {
+            int r;
+            int c;
+        };
+        assert(MAXZOMBIES == 100);
+        const int NDOOMED = 4;
+        Coord doomed[NDOOMED];
+        for (int k = 0; k < NDOOMED; k++)
+        {
+            doomed[k].r = 3;
+            doomed[k].c = 5 * k + 3;
+            assert(a.addZombie(doomed[k].r, doomed[k].c));
+            surroundWithPoison(a, doomed[k].r, doomed[k].c);
+            for (int i = 0; i < MAXZOMBIES / NDOOMED - 1; i++)
+                assert(a.addZombie(20, 20));
+        }
+        assert(!a.addZombie(20, 20));
+        assert(a.zombieCount() == MAXZOMBIES);
+        a.moveZombies();
+        assert(a.zombieCount() == MAXZOMBIES);
+        for (int k = 0; k < NDOOMED; k++)
+        {
+            findTheZombie(a, doomed[k].r, doomed[k].c);
+            surroundWithPoison(a, doomed[k].r, doomed[k].c);
+        }
+        a.moveZombies();
+        assert(a.zombieCount() == MAXZOMBIES);
+        a.moveZombies();
+        assert(a.zombieCount() == MAXZOMBIES - NDOOMED);
+        for (int k = 0; k < NDOOMED; k++)
+            assert(a.addZombie(20, 20));
+        assert(!a.addZombie(20, 20));
+        // If the program crashes after leaving this compound statement, you
+        // are probably messing something up when you delete a zombie after
+        // it dies (or you have mis-coded the destructor).
+        //
+        // Draw a picture of your m_zombies array before the zombies move,
+        // and also note the values of m_nZombies or any other variable you
+        // might have that's involved with the number of zombies.  Trace
+        // through your code step by step as the zombies move and die,
+        // updating the picture according to what the code says, not what
+        // you want it to do.  If you don't see a problem then, try tracing
+        // through the destruction of the arena.
+        //
+        // If you execute the code, use the debugger to check on the values
+        // of key variables at various points.  If you didn't try to learn
+        // to use the debugger, insert statements that write the values of
+        // key variables to cerr so you can trace the execution of your code
+        // and see the first place where something has gone amiss.  (Comment
+        // out the call to clearScreen in Arena::display so that your output
+        // doesn't disappear.)
+    }
+    cout << "Passed all basic tests (as long as when run under g31 there is no further message after this)." << endl;
+    exit(0);
+}
 ///////////////////////////////////////////////////////////////////////////
 // main()
 ///////////////////////////////////////////////////////////////////////////
@@ -1003,6 +1197,8 @@ int main()
 {
     // Create a game
     // Use this instead to create a mini-game:   Game g(3, 5, 2);
+    doBasicTests(); // Remove this line after completing test.
+    return 0;       // Remove this line after completing test.
     Game g(10, 12, 40);
 
     // Play the game
